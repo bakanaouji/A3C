@@ -8,3 +8,21 @@ $$\theta$$を全てのスレッド間で共有するパラメータベクトル�
 各スレッドiはモメンタム項の更新$$m_i=\alpha m_i+(1-\alpha)\Delta\theta_i$$とパラメータの更新$$\theta\gets\theta-\eta m_i$$をロックなしで独立して行う．
 
 ここで，各スレッドは独自の勾配とモメンタムベクトルを保持している．
+
+## RMSProp
+非同期なRMSPropに関する研究はあまりされていない．
+
+標準的なRMSPropの更新式は，以下で与えられる．
+$$g=\alpha g + (1-\alpha)\Delta\theta^2$$
+$$\theta \gets \theta - \eta \frac{\Delta\theta}{\sqrt{g+\epsilon}}$$
+
+非同期でRMSProsを適用するには，要素ごとの$$g$$の移動平均をスレッドごとに共有するかどうかを決定する必要がある．
+
+```math
+\begin{array}{rr}
+& 12345\
++&6789\
+\hline
+&13023
+\end{array}
+```
