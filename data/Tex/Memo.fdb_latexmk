@@ -1,0 +1,24 @@
+# Fdb version 3
+["dvipdf"] 1514305390 "Memo.dvi" "Memo.pdf" "Memo" 1514305390
+  "Memo.dvi" 1514305390 2232 6fc5dc0983cf598c9fa302120dc6addb "latex"
+  (generated)
+  "Memo.pdf"
+["latex"] 1514305390 "Memo.tex" "Memo.dvi" "Memo" 1514305390
+  "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/goth10.tfm" 1463434352 1196 5981e79c37b2cfd27b3612a6783cd4b6 ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/min10.tfm" 1463434352 1196 1be730212205a270378fba11a44765dc ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/tgoth10.tfm" 1463434352 856 7404843a5f798859944d7973a47821d5 ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin10.tfm" 1463434352 856 39c171483fe1bb7d0e1368980c0c205b ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
+  "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1136768653 1288 655e228510b4c2a1abe905c368440826 ""
+  "/usr/local/texlive/2016/texmf-dist/tex/platex/base/jarticle.cls" 1462837567 25231 a08460ff81096cb3e80d7be01474f985 ""
+  "/usr/local/texlive/2016/texmf-dist/tex/platex/base/jsize10.clo" 1462837567 9313 f538ec39b9e111bf9320856d312460b2 ""
+  "/usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf" 1463093894 31953 b9489e6e586f798610c60aec1f5ec548 ""
+  "/usr/local/texlive/2016/texmf-var/web2c/eptex/platex.fmt" 1478876602 4058166 1e06f5f39b457b8a69153dfac85e58a8 ""
+  "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
+  "Memo.aux" 1514305390 241 63f3a5a4761c43eb2a3f02d38e1f510a ""
+  "Memo.tex" 1514305389 1163 1f08dbc5e86b0ee647a0522e7af15047 ""
+  (generated)
+  "Memo.log"
+  "Memo.aux"
+  "Memo.dvi"
