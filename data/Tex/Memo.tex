@@ -29,6 +29,7 @@ $$\theta \gets \theta - \eta \frac{\Delta\theta}{\sqrt{g+\epsilon}}$$
 スレッド間で共有することで，メモリを削減できる．
 
 \subsection{実験設定}
+\subsubsection{共通設定}
 \begin{itemize}
 	\item スレッド数 : 16
 	\item 5回行動するごとにパラメータを更新
@@ -36,14 +37,22 @@ $$\theta \gets \theta - \eta \frac{\Delta\theta}{\sqrt{g+\epsilon}}$$
 	\item Atariの実験では，"Human-level control through deep reinforcement learning"と同じ入力の前処理を用いる
 	\item 行動繰り返し数 : 4
 	\item ネットワークの構造は"Playing atari with deep reinforce- ment learning"と同じものを用いる（ストライド4の8×8のフィルターを16個有する畳み込み層，ストライド2の4×4のフィルターを32個有する畳み込み層，256個のユニットを持つ全結合層から成る．各層の活性化関数はReLU．）
-	\item 価値関数法では，状態-行動の価値が出力となる．
-	\item Actor-Criticでは，各行動を選択する確率（softmax）と，状態の価値の２つの出力を持つ．
 	\item 割引率$\gamma$ : $0.99$
 	\item 減衰係数$\alpha$ : $0.99$
-	\item 価値関数法では，$\epsilon$を３つの値$\epsilon_1,\epsilon_2,\epsilon_3$からそれぞれ確率$0.4,0.3,0.3$で確率的に決定
-	\item $\epsilon_1,\epsilon_2,\epsilon_3$は，はじめの400万フレームに渡って$1.0$からそれぞれ$0.1,0.01,0.5$に線形減少させる．
-	\item A3Cは，$\beta=0.01$のエントロピー正則化を用いた
 	\item 初期学習率は$LogUniform(10^{-4},10^{-2})$からサンプルし，学習中に$0.0$に線形減少させる．
+\end{itemize}
+
+\subsubsection{価値関数法}
+\begin{itemize}
+	\item ネットワークの出力 : 状態-行動の価値
+	\item $\epsilon$ : ３つの値$\epsilon_1,\epsilon_2,\epsilon_3$からそれぞれ確率$0.4,0.3,0.3$で確率的に決定
+	\item $\epsilon_1,\epsilon_2,\epsilon_3$は，はじめの400万フレームに渡って$1.0$からそれぞれ$0.1,0.01,0.5$に線形減少させる．
+\end{itemize}
+
+\subsubsection{A3C}
+\begin{itemize}
+	\item ネットワークの出力 : 各行動を選択する確率（softmax）と，状態の価値
+	\item エントロピー正則化の強さ : $\beta=0.01$
 \end{itemize}
 
 \end{document}
