@@ -3,8 +3,8 @@ INPUT /usr/local/texlive/2016/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf-var/web2c/eptex/platex.fmt
-INPUT main.tex
-OUTPUT main.log
+INPUT Algorithm.tex
+OUTPUT Algorithm.log
 INPUT /usr/local/texlive/2016/texmf-dist/tex/platex/base/jarticle.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/platex/base/jarticle.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/platex/base/jsize10.clo
@@ -99,9 +99,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/url/url.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/url/url.sty
-INPUT main.aux
-INPUT main.aux
-OUTPUT main.aux
+INPUT Algorithm.aux
+INPUT Algorithm.aux
+OUTPUT Algorithm.aux
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/txfonts/omltxmi.fd
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/txfonts/omltxmi.fd
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/txfonts/omstxsy.fd
@@ -178,5 +178,5 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/txfonts/txbex.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin8.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/min8.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/txfonts/txr.tfm
-OUTPUT main.dvi
-INPUT main.aux
+OUTPUT Algorithm.dvi
+INPUT Algorithm.aux
