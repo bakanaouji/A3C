@@ -30,10 +30,38 @@
 
 \section{A3Cの擬似コード}
 \begin{algorithm}[htb]
-\caption{A3Cの擬似コード}
+\caption{各スレッド毎のA3Cの擬似コード}
 \label{alg:a3c}                          
 \begin{algorithmic}[1]   
 \REQUIRE 
+\STATE //グローバルパラメータ$\theta$と$\theta_v$，グローバルカウンター$T=0$は全スレッドで共有する
+\STATE // パラメータ$\theta^{\prime}$と$\theta_v^{\prime}$は各スレッド毎に保有する
+\STATE $t\gets 1$
+\WHILE{$T<T_{\mathrm{max}}$}
+	\STATE $d\theta\gets 0,~d\theta_v\gets 0$
+	\STATE $\theta^{\prime}=\theta,~\theta_v^{\prime}=\theta_v$
+	\STATE $t_{\mathrm{start}}=t$
+	\STATE $s_t,~done_t$を観測
+	\STATE $done=done_t$
+	\WHILE{$!done$ and $t-t_{\mathrm{start}}<t_{\mathrm{max}}$}
+		\STATE $\pi(a_t|s_t;\theta^{\prime})$に従って$a_t$を実行
+		\STATE $(s_{t+1},~r_t,~done_t)$を観測
+		\STATE $done=done_t$
+		\STATE $t\gets t+1$
+		\STATE $T\gets T+1$
+	\ENDWHILE
+	\IF{$done$}
+	\STATE $R=0$
+	\ELSE
+	\STATE $R=V(s_t,~\theta_v^{\prime})$~~~~// 最終状態からのブートストラップ
+	\ENDIF
+	\FOR{$i\in\{t-1,~\cdots,~t_{\mathrm{start}}\}$}
+		\STATE $R\gets r_i+\gamma R$
+		\STATE $d\theta\gets d\theta+\Delta_{\theta^{\prime}}\log{\pi(a_i|s_i;\theta^{\prime})(R-V(s_i;\theta_v^{\prime}))}$~~~~// $\theta^{\prime}$に関する勾配を蓄積
+		\STATE $d\theta_v\gets d\theta_v+\delta(R-V(s_i;\theta_v^{\prime}))^2/\delta\theta_v^{\prime}$~~~~// $\theta_v^{\prime}$に関する勾配を蓄積
+	\ENDFOR
+	\STATE $d\theta,~d\theta_v$を使って$\theta,~\theta_v$を非同期更新
+\ENDWHILE
 \ENSURE
 \end{algorithmic}
 \end{algorithm}

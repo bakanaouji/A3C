@@ -1,9 +1,9 @@
 # Fdb version 3
-["dvipdf"] 1514729114 "Algorithm.dvi" "Algorithm.pdf" "Algorithm" 1514729114
-  "Algorithm.dvi" 1514729114 7692 8ad4d6dbcdbfdc0ef0e48e607143072f "latex"
+["dvipdf"] 1514731776 "Algorithm.dvi" "Algorithm.pdf" "Algorithm" 1514731776
+  "Algorithm.dvi" 1514731776 10996 8309b4d6d2e1f91a6b2f2faf5ca17fc4 "latex"
   (generated)
   "Algorithm.pdf"
-["latex"] 1514729113 "Algorithm.tex" "Algorithm.dvi" "Algorithm" 1514729114
+["latex"] 1514731775 "Algorithm.tex" "Algorithm.dvi" "Algorithm" 1514731776
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/goth10.tfm" 1463434352 1196 5981e79c37b2cfd27b3612a6783cd4b6 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/ptex-fonts/standard/min10.tfm" 1463434352 1196 1be730212205a270378fba11a44765dc ""
@@ -89,9 +89,9 @@
   "/usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf" 1463093894 31953 b9489e6e586f798610c60aec1f5ec548 ""
   "/usr/local/texlive/2016/texmf-var/web2c/eptex/platex.fmt" 1478876602 4058166 1e06f5f39b457b8a69153dfac85e58a8 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
-  "Algorithm.aux" 1514729114 1056 aaa9d89083edac1cd388405b9bb37328 ""
-  "Algorithm.tex" 1514729113 4732 b7c1d05a14095ed69eb7383f5cf7c3be ""
+  "Algorithm.aux" 1514731776 1077 a91b6b4a150fd401ecb21806eda4a869 ""
+  "Algorithm.tex" 1514731775 6097 525d71999e141cdeab008b51d50bf841 ""
   (generated)
-  "Algorithm.log"
   "Algorithm.dvi"
   "Algorithm.aux"
+  "Algorithm.log"
