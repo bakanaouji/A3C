@@ -6,6 +6,64 @@ from collections import deque
 from gym import spaces
 
 
+class NoopResetEnv(gym.Wrapper):
+    def __init__(self, env, noop_max=30):
+        """
+        エピソードの開始時に数フレーム何もしない行動を取り，
+        初期状態を決定する．
+        """
+        gym.Wrapper.__init__(self, env)
+        self.noop_max = noop_max
+        self.override_num_noops = None
+        self.noop_action = 0
+        assert env.unwrapped.get_action_meanings()[0] == 'NOOP'
+
+    def _reset(self, **kwargs):
+        self.env.reset(**kwargs)
+        # ランダムなフレーム数分「何もしない」
+        if self.override_num_noops is not None:
+            noops = self.override_num_noops
+        else:
+            noops = self.unwrapped.np_random.randint(1,
+                                                     self.noop_max + 1)  # pylint: disable=E1101
+        assert noops > 0
+        obs = None
+        for _ in range(noops):
+            # 「何もしない」で，次の画面を返す
+            obs, _, done, _ = self.env.step(self.noop_action)
+            if done:
+                obs = self.env.reset(**kwargs)
+        return obs
+
+
+class MaxAndSkipEnv(gym.Wrapper):
+    def __init__(self, env, skip=4):
+        """
+        1回行動を取ると，同じ行動を指定フレーム分続ける．
+        指定数分行動を繰り返したら，直前のフレームの観測との最大値を状態として返す．
+        """
+        gym.Wrapper.__init__(self, env)
+        self._obs_buffer = np.zeros((2,) + env.observation_space.shape,
+                                    dtype='uint8')
+        self._skip = skip
+
+    def _step(self, action):
+        """Repeat action, sum reward, and max over last observations."""
+        total_reward = 0.0
+        done = None
+        info = None
+        for i in range(self._skip):
+            obs, reward, done, info = self.env.step(action)
+            if i == self._skip - 2: self._obs_buffer[0] = obs
+            if i == self._skip - 1: self._obs_buffer[1] = obs
+            total_reward += reward
+            if done:
+                break
+        max_frame = self._obs_buffer.max(axis=0)
+
+        return max_frame, total_reward, done, info
+
+
 class EpisodicLifeEnv(gym.Wrapper):
     def __init__(self, env):
         """
@@ -57,7 +115,7 @@ class FireResetEnv(gym.Wrapper):
 class WarpFrame(gym.ObservationWrapper):
     def __init__(self, env):
         """
-        観測した画面を(84,84)サイズに変換．
+        観測した画面を(84,84)サイズのグレースケール画像に変換．
         """
         gym.ObservationWrapper.__init__(self, env)
         self.width = 84
@@ -125,6 +183,14 @@ class ScaledFloatFrame(gym.ObservationWrapper):
         状態を255で割って正規化する
         """
         return np.array(obs).astype(np.float32) / 255.0
+
+
+def make_atari(env_id):
+    env = gym.make(env_id)
+    assert 'NoFrameskip' in env.spec.id
+    env = NoopResetEnv(env, noop_max=30)
+    env = MaxAndSkipEnv(env, skip=4)
+    return env
 
 
 def wrap_deepmind(env, episode_life=True, clip_rewards=True, frame_stack=False,
