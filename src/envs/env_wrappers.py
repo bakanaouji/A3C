@@ -6,14 +6,14 @@ from collections import deque
 from gym import spaces
 
 
-class NoopResetEnv(gym.Wrapper):
-    def __init__(self, env, noop_max=30):
+class NoOpResetEnv(gym.Wrapper):
+    def __init__(self, env, no_op_max=30):
         """
         エピソードの開始時に数フレーム何もしない行動を取り，
         初期状態を決定する．
         """
         gym.Wrapper.__init__(self, env)
-        self.noop_max = noop_max
+        self.noop_max = no_op_max
         self.override_num_noops = None
         self.noop_action = 0
         assert env.unwrapped.get_action_meanings()[0] == 'NOOP'
@@ -188,7 +188,7 @@ class ScaledFloatFrame(gym.ObservationWrapper):
 def make_atari(env_id):
     env = gym.make(env_id)
     assert 'NoFrameskip' in env.spec.id
-    env = NoopResetEnv(env, noop_max=30)
+    env = NoOpResetEnv(env, no_op_max=30)
     env = MaxAndSkipEnv(env, skip=4)
     return env
 
