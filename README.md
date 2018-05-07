@@ -1,2 +1,2 @@
-# A3C
+# asynchronous-actor-critic
 このリポジトリは，A3Cの実験リポジトリです．
