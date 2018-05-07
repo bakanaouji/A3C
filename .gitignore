@@ -34,6 +34,14 @@ out
 build
 bin
 
+#tex
+*.aux
+*.dvi
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+
 # Other
 *.log
 *.swp
