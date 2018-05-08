@@ -4,10 +4,11 @@ global_step = 0
 
 
 class Worker(object):
-    def __init__(self, env_id, thread_id, seed, tmax):
+    def __init__(self, env_id, thread_id, seed, tmax, batch_size):
         self.thread_id = thread_id
         self.global_step = global_step
         self.tmax = tmax
+        self.batch_size = batch_size
 
         # 環境初期化
         self.env = make_atari(env_id)
@@ -23,15 +24,20 @@ class Worker(object):
         # メインループ
         local_step = 0
         while global_step < self.tmax:
-            # 前の状態を保存
-            prev_obs = obs.copy()
-            # 行動選択
-            action = 1
-            # 行動を実行し，報酬と次の画面とdoneを観測
-            obs, reward, done, _ = self.env.step(action)
+            start_step = local_step
+            done = False
+            while not done and local_step - start_step < self.batch_size:
+                # 前の状態を保存
+                prev_obs = obs.copy()
+                # 行動選択
+                action = self.env.action_space.sample()
+                # 行動を実行し，報酬と次の画面とdoneを観測
+                obs, reward, done, _ = self.env.step(action)
+                # ステップを進める
+                global_step += 1
+                local_step += 1
             if done:
                 self.env.reset()
 
-            global_step += 1
-            local_step += 1
-            print(self.thread_id, global_step, local_step)
+            print(self.thread_id, global_step, local_step,
+                  local_step - start_step)

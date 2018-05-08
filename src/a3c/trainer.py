@@ -15,6 +15,7 @@ class Trainer(object):
         self.height = args.height
 
         self.tmax = args.tmax
+        self.batch_size = args.batch_size
         self.worker_num = args.worker_num
 
         # 乱数シードセット
@@ -24,8 +25,9 @@ class Trainer(object):
 
     def train(self):
         # ワーカーとスレッド初期化
-        workers = [Worker(self.env_name, i, self.seed, self.tmax) for i in
-                   range(self.worker_num)]
+        workers = [
+            Worker(self.env_name, i, self.seed, self.tmax, self.batch_size)
+            for i in range(self.worker_num)]
         thread = [Thread(target=workers[i].train,
                          args=())
                   for i in range(len(workers))]
@@ -34,6 +36,6 @@ class Trainer(object):
         for thread in thread:
             thread.start()
 
-        # while True:
-        #     for worker in workers:
-        #         worker.env.render()
+        while True:
+            for worker in workers:
+                worker.env.render()
