@@ -44,7 +44,7 @@ class MaxAndSkipEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         self._obs_buffer = np.zeros((2,) + env.observation_space.shape,
-                                    dtype='uint8')
+                                    dtype=np.uint8)
         self._skip = skip
 
     def _step(self, action):
@@ -161,15 +161,31 @@ class FrameStack(gym.Wrapper):
 class LazyFrames(object):
     def __init__(self, frames):
         self._frames = frames
+        self._out = None
+
+    def _force(self):
+        if self._out is None:
+            self._out = np.concatenate(self._frames, axis=2)
+            self._frames = None
+        return self._out
 
     def __array__(self, dtype=None):
-        out = np.concatenate(self._frames, axis=2)
+        out = self._force()
         if dtype is not None:
             out = out.astype(dtype)
         return out
 
+    def __len__(self):
+        return len(self._force())
+
+    def __getitem__(self, i):
+        return self._force()[i]
+
 
 class ClipRewardEnv(gym.RewardWrapper):
+    def __init__(self, env):
+        gym.RewardWrapper.__init__(self, env)
+
     def _reward(self, reward):
         """
         報酬が正なら+1に，負なら-1に，0なら0とする．
@@ -178,6 +194,9 @@ class ClipRewardEnv(gym.RewardWrapper):
 
 
 class ScaledFloatFrame(gym.ObservationWrapper):
+    def __init__(self, env):
+        gym.ObservationWrapper.__init__(self, env)
+
     def _observation(self, obs):
         """
         状態を255で割って正規化する

@@ -34,6 +34,11 @@ out
 build
 bin
 
+# Other
+*.log
+*.swp
+*.bak
+
 #tex
 *.aux
 *.dvi
@@ -42,18 +47,6 @@ bin
 *.log
 *.synctex.gz
 
-# Other
-*.log
-*.swp
-*.bak
-
-#Log
-TestLog
-TetrisLog
-AcrobotLog
-*.csv
-
-#openAIgym
-cartpole-xNES
-cartpole-hill
-upload.py
+# python
+__pycache__
+*.pyc
