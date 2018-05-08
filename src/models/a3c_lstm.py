@@ -28,14 +28,13 @@ class A3CLSTM(object):
         shared = Flatten()(shared)
         shared = Dense(256, activation='relu')(shared)
 
-        # 行動確率
+        # 政策
         action_probs = Dense(num_actions, activation='softmax')(shared)
+        self.policy_network = Model(inputs=inputs, outputs=action_probs)
+        self.p_out = self.policy_network(self.s)
+
         # 価値関数
         state_value = Dense(1)(shared)
-
-        # モデル
-        self.policy_network = Model(inputs=inputs, outputs=action_probs)
         self.value_network = Model(inputs=inputs, outputs=state_value)
-
-        self.p_out = self.policy_network(self.s)
         self.v_out = self.value_network(self.s)
+
