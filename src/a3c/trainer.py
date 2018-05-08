@@ -1,8 +1,8 @@
+from threading import Thread
+
 import tensorflow as tf
 import numpy as np
 import random
-
-from multiprocessing import Value, Process
 
 from a3c.worker import Worker
 
@@ -24,12 +24,16 @@ class Trainer(object):
 
     def train(self):
         # ワーカーとスレッド初期化
-        global_step = Value('i', self.tmax)
-        workers = [Worker(i, global_step) for i in range(self.worker_num)]
-        processes = [Process(target=workers[i].train,
-                             args=(self.env_name, self.seed))
-                     for i in range(len(workers))]
+        workers = [Worker(self.env_name, i, self.seed, self.tmax) for i in
+                   range(self.worker_num)]
+        thread = [Thread(target=workers[i].train,
+                         args=())
+                  for i in range(len(workers))]
 
         # 各スレッドで学習実行開始
-        for thread in processes:
+        for thread in thread:
             thread.start()
+
+        # while True:
+        #     for worker in workers:
+        #         worker.env.render()
