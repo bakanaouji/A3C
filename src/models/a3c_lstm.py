@@ -1,4 +1,6 @@
 import tensorflow as tf
+import numpy as np
+
 from keras.models import Model
 from keras.layers import Conv2D, Flatten, Dense, Input
 
@@ -38,3 +40,10 @@ class A3CLSTM(object):
         self.value_network = Model(inputs=inputs, outputs=state_value)
         self.v_out = self.value_network(self.s)
 
+    def take_action(self, sess, observation):
+        action_p = self.p_out.eval(
+            session=sess,
+            feed_dict={self.s: observation}
+        )
+        return np.random.choice(action_p[0].size, 1,
+                                p=action_p[0])

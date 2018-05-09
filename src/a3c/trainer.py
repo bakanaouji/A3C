@@ -36,6 +36,8 @@ class Trainer(object):
 
         # initialize session
         sess = tf.InteractiveSession()
+
+        # initialize variables
         sess.run(tf.global_variables_initializer())
 
         # ワーカーとスレッド初期化

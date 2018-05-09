@@ -36,11 +36,7 @@ class Worker(object):
                 # 前の状態を保存
                 prev_obs = obs.copy()
                 # 行動選択
-                action_p = self.model.p_out.eval(
-                    session=self.sess,
-                    feed_dict={self.model.s: [obs]}
-                )
-                action = self.env.action_space.sample()
+                action = self.model.take_action(self.sess, [obs])
                 # 行動を実行し，報酬と次の画面とdoneを観測
                 obs, reward, done, _ = self.env.step(action)
                 # ステップを進める
