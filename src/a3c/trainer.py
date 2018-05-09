@@ -20,6 +20,7 @@ class Trainer(object):
         self.batch_size = args.batch_size
         self.worker_num = args.worker_num
         self.history_len = args.history_len
+        self.discount_fact = args.discount_fact
 
         # 乱数シードセット
         tf.set_random_seed(args.seed)
@@ -42,7 +43,8 @@ class Trainer(object):
 
         # ワーカーとスレッド初期化
         workers = [Worker(a3c_lstm, sess, self.env_name, i, self.seed,
-                          self.tmax, self.batch_size) for i in range(self.worker_num)]
+                          self.tmax, self.batch_size, self.discount_fact)
+                   for i in range(self.worker_num)]
         thread = [Thread(target=workers[i].train,
                          args=())
                   for i in range(len(workers))]

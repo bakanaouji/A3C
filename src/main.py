@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--history_len', type=int, default=4,
                         help='Number of most recent frames experienced '
                              'by the agent that are given as input to the Q-Network.')
+    parser.add_argument('--discount_fact', type=float, default=0.99,
+                        help='Discount factor gamma used in the A3C update.')
 
     args = parser.parse_args()
 

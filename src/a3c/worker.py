@@ -1,14 +1,18 @@
+import numpy as np
+
 from envs.env_wrappers import make_atari, wrap_deepmind
 
 global_step = 0
 
 
 class Worker(object):
-    def __init__(self, model, sess, env_id, thread_id, seed, tmax, batch_size):
+    def __init__(self, model, sess, env_id, thread_id, seed, tmax, batch_size,
+                 discount_fact):
         self.thread_id = thread_id
         self.global_step = global_step
         self.tmax = tmax
         self.batch_size = batch_size
+        self.discount_fact = discount_fact
 
         # initialize environment
         self.env = make_atari(env_id)
@@ -64,5 +68,12 @@ class Worker(object):
                 # bootstrap from last state
                 R = self.model.estimate_value(self.sess, [obs])
 
-            print(self.thread_id, global_step, local_step,
-                  local_step - start_step)
+            episode_len = len(s_batch)
+
+            # make reward batch
+            r_batch = np.zeros(episode_len)
+            for i in reversed(range(episode_len)):
+                R = r_history[i] + self.discount_fact * R
+                r_batch[i] = R
+
+            print(self.thread_id, global_step, local_step, episode_len)
