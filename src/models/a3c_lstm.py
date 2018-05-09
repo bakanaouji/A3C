@@ -41,9 +41,11 @@ class A3CLSTM(object):
         self.v_out = self.value_network(self.s)
 
     def take_action(self, sess, observation):
-        action_p = self.p_out.eval(
-            session=sess,
-            feed_dict={self.s: observation}
-        )
+        action_p = self.p_out.eval(session=sess,
+                                   feed_dict={self.s: observation})
         return np.random.choice(action_p[0].size, 1,
                                 p=action_p[0])
+
+    def estimate_value(self, sess, observation):
+        return self.v_out.eval(session=sess,
+                               feed_dict={self.s: observation})[0][0]
