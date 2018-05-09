@@ -19,8 +19,11 @@ def main():
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Number of training cases over which each SGD update is computed.')
-    parser.add_argument('--worker_num', type=int, default=16,
+    parser.add_argument('--worker_num', type=int, default=2,
                         help='How many training processes to use')
+    parser.add_argument('--history_len', type=int, default=4,
+                        help='Number of most recent frames experienced '
+                             'by the agent that are given as input to the Q-Network.')
 
     args = parser.parse_args()
 

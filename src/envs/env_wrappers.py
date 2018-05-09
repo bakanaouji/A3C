@@ -140,7 +140,7 @@ class FrameStack(gym.Wrapper):
         self.frames = deque([], maxlen=k)
         shp = env.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(shp[0], shp[1], shp[2] * k))
+                                            shape=(k * shp[2], shp[1], shp[0]))
 
     def _reset(self):
         ob = self.env.reset()
@@ -166,6 +166,7 @@ class LazyFrames(object):
     def _force(self):
         if self._out is None:
             self._out = np.concatenate(self._frames, axis=2)
+            self._out = self._out.transpose(2, 0, 1)
             self._frames = None
         return self._out
 
@@ -212,21 +213,16 @@ def make_atari(env_id):
     return env
 
 
-def wrap_deepmind(env, episode_life=True, clip_rewards=True, frame_stack=False,
-                  scale=False):
+def wrap_deepmind(env):
     """
 
     DeepMindと同様の設定に環境をラップする．
     """
-    if episode_life:
-        env = EpisodicLifeEnv(env)
+    env = EpisodicLifeEnv(env)
     if 'FIRE' in env.unwrapped.get_action_meanings():
         env = FireResetEnv(env)
     env = WarpFrame(env)
-    if scale:
-        env = ScaledFloatFrame(env)
-    if clip_rewards:
-        env = ClipRewardEnv(env)
-    if frame_stack:
-        env = FrameStack(env, 4)
+    env = FrameStack(env, 4)
+    env = ClipRewardEnv(env)
+    env = ScaledFloatFrame(env)
     return env
