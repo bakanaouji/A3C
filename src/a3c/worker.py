@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 
 from envs.env_wrappers import make_atari, wrap_deepmind
 
@@ -24,6 +25,23 @@ class Worker(object):
 
         # initialize model
         self.model = model
+
+    def build_training_op(self):
+        A = tf.placeholder(tf.float32, [None])
+        R = tf.placeholder(tf.float32, [None])
+
+        log_prob = tf.nn.sparse_softmax_cross_entropy_with_logits(
+            logits=self.model.p_out, labels=A)
+        p_loss = tf.reduce_mean(log_prob *
+                                tf.stop_gradient(R - self.model.v_out))
+        v_loss = tf.reduce_mean(tf.square(R - self.model.v_out))
+        entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
+                                               tf.log(self.model.p_out),
+                                               axis=1,
+                                               keep_dims=True))
+        loss = p_loss - entropy * 0.01 + v_loss * 0.5
+
+        # optimizer = tf.train.RMSPropOptimizer(decay=0.99, epsilon=1e-5)
 
     def train(self):
         global global_step
