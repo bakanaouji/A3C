@@ -25,8 +25,8 @@ class Worker(object):
         self.sess = sess
 
         # initialize model
-        self.model = A3CLSTM(thread_id, self.env.action_space.n, history_len,
-                             width, height)
+        self.model = A3CLSTM('model' + str(thread_id), self.env.action_space.n,
+                             history_len, width, height)
         self.global_model = global_model
 
     def build_training_op(self):
@@ -63,8 +63,7 @@ class Worker(object):
         # メインループ
         local_step = 0
         while global_step < self.tmax:
-            self.model.update_param(self.global_model.policy_network,
-                                    self.global_model.value_network)
+            self.model.update_param(self.global_model)
 
             s_batch = []
             a_batch = []

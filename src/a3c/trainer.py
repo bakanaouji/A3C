@@ -31,8 +31,8 @@ class Trainer(object):
         # initialize model
         env = make_atari(self.env_name)
         env = wrap_deepmind(env)
-        a3c_lstm = A3CLSTM(env.action_space.n, self.history_len, self.width,
-                           self.height)
+        a3c_lstm = A3CLSTM('main', env.action_space.n, self.history_len,
+                           self.width, self.height)
         env.close()
 
         # initialize session

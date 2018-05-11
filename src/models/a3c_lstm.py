@@ -6,14 +6,14 @@ from keras.layers import Conv2D, Flatten, Dense, Input
 
 
 class A3CLSTM(object):
-    def __init__(self, thread_id, num_actions, agent_history_length,
+    def __init__(self, name, num_actions, agent_history_length,
                  frame_width, frame_height):
         # 入力
         self.s = tf.placeholder(
             tf.float32, [None, agent_history_length, frame_width, frame_height]
 
         )
-        with tf.name_scope('model' + str(thread_id)):
+        with tf.name_scope(name):
             inputs = Input(shape=(agent_history_length, frame_width,
                                   frame_height))
             # 共通の中間層
@@ -52,12 +52,8 @@ class A3CLSTM(object):
         return self.v_out.eval(session=sess,
                                feed_dict={self.s: observation})[0][0]
 
-    def update_param(self, p, v):
-        p_weights = p.get_weights()
-        policy_weights = self.policy_network.trainable_weights
-        for p_weight, policy_weight in zip(p_weights, policy_weights):
-            policy_weight.assign(p_weight)
-        v_weights = v.get_weights()
-        value_weights = self.value_network.trainable_weights
-        for v_weight, value_weight in zip(v_weights, value_weights):
-            value_weight.assign(v_weight)
+    def update_param(self, src_model):
+        src_weights = src_model.model.get_weights()
+        weights = self.model.trainable_weights
+        for weight, src_weight in zip(src_weights, weights):
+            src_weight.assign(weight)
