@@ -5,13 +5,12 @@ from keras.models import Model
 from keras.layers import Conv2D, Flatten, Dense, Input
 
 
-class A3CLSTM(object):
+class AtariModel(object):
     def __init__(self, num_actions, agent_history_length,
                  frame_width, frame_height):
         # 入力
         self.s = tf.placeholder(
             tf.float32, [None, agent_history_length, frame_width, frame_height]
-
         )
         inputs = Input(shape=(agent_history_length, frame_width,
                               frame_height))
@@ -45,7 +44,7 @@ class A3CLSTM(object):
         action_p = self.p_out.eval(session=sess,
                                    feed_dict={self.s: observation})
         return np.random.choice(action_p[0].size, 1,
-                                p=action_p[0])
+                                p=action_p[0])[0]
 
     def estimate_value(self, sess, observation):
         return self.v_out.eval(session=sess,

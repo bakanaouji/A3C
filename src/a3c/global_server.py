@@ -1,12 +1,14 @@
 import tensorflow as tf
 
-from models.a3c_lstm import A3CLSTM
+from models.atari_model import AtariModel
+from models.normal_model import NormalModel
 
 
 class GlobalServer:
     def __init__(self, action_n, history_len, width, height):
         # initialize model
-        self.model = A3CLSTM(action_n, history_len, width, height)
+        # self.model = AtariModel(action_n, history_len, width, height)
+        self.model = NormalModel(action_n, 4)
 
         self.weights = self.model.model.trainable_weights
 

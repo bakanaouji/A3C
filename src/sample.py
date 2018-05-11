@@ -293,7 +293,7 @@ class Environment:
         # 総試行数、スレッド名、今回の報酬を出力
         print("スレッド：" + self.name + "、試行数：" + str(
             self.count_trial_each_thread) + "、今回のステップ:" + str(
-            step) + "、平均ステップ：" + str(self.total_reward_vec.mean()))
+            step) + "、平均ステップ：" + str(self.total_reward_vec.mean()), frames)
 
         # スレッドで平均報酬が一定を越えたら終了
         if self.total_reward_vec.mean() > 199:

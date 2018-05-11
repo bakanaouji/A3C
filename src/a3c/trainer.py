@@ -6,12 +6,11 @@ import random
 
 from a3c.global_server import GlobalServer
 from a3c.worker import Worker
-from envs.env_wrappers import make_atari, wrap_deepmind
 
 
 class Trainer(object):
-    def __init__(self, args):
-        self.env_name = args.env_name
+    def __init__(self, args, envs):
+        self.envs = envs
         self.seed = args.seed
         self.width = args.width
         self.height = args.height
@@ -29,18 +28,14 @@ class Trainer(object):
 
     def train(self):
         # initialize model
-        env = make_atari(self.env_name)
-        env = wrap_deepmind(env)
-        action_n = env.action_space.n
-        env.close()
-        global_server = GlobalServer(action_n, self.history_len,
-                                     self.width, self.height)
+        global_server = GlobalServer(self.envs[0].action_space.n,
+                                     self.history_len, self.width, self.height)
 
         # initialize session
         sess = tf.InteractiveSession()
 
         # ワーカーとスレッド初期化
-        workers = [Worker(sess, global_server, self.env_name, i, self.seed,
+        workers = [Worker(sess, global_server, self.envs[i], i, self.seed,
                           self.tmax, self.batch_size, self.discount_fact,
                           self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]
@@ -55,6 +50,6 @@ class Trainer(object):
         for thread in thread:
             thread.start()
 
-        while True:
-            for worker in workers:
-                worker.env.render()
+        # while True:
+        #     for worker in workers:
+        #         worker.env.render()

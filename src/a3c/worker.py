@@ -1,58 +1,59 @@
 import numpy as np
 import tensorflow as tf
 
-from envs.env_wrappers import make_atari, wrap_deepmind
-from models.a3c_lstm import A3CLSTM
+from models.atari_model import AtariModel
+from models.normal_model import NormalModel
 
 global_step = 0
 
 
 class Worker(object):
-    def __init__(self, sess, global_server, env_id, thread_id, seed, tmax,
+    def __init__(self, sess, global_server, env, thread_id, seed, tmax,
                  batch_size, discount_fact, history_len, width, height):
         self.thread_id = thread_id
         self.global_step = global_step
         self.tmax = tmax
         self.batch_size = batch_size
         self.discount_fact = discount_fact
+        self.global_server = global_server
 
         # initialize environment
-        self.env = make_atari(env_id)
-        self.env.seed(seed + thread_id)
-        self.env = wrap_deepmind(self.env)
+        self.env = env
+        self.action_n = self.env.action_space.n
 
         # initialize session
         self.sess = sess
 
         # initialize model
-        self.model = A3CLSTM(self.env.action_space.n,
-                             history_len, width, height)
-        self.global_server = global_server
+        # self.model = AtariModel(self.env.action_space.n,
+        #                         history_len, width, height)
+        self.model = NormalModel(self.env.action_space.n, 4)
+        self.weights = self.model.model.trainable_weights
+
+        # initialize update operation
+        self.A, self.R, self.apply_grads = self.build_training_op()
 
     def build_training_op(self):
-        A = tf.placeholder(tf.float32, [None])
+        A = tf.placeholder(tf.int32, [None])
         R = tf.placeholder(tf.float32, [None])
 
-        log_prob = tf.nn.sparse_softmax_cross_entropy_with_logits(
-            logits=self.model.p_out, labels=A)
+        log_prob = -tf.log(tf.reduce_sum(self.model.p_out *
+                                         tf.one_hot(A, depth=self.action_n),
+                                         axis=1, keepdims=True))
         p_loss = tf.reduce_mean(log_prob *
                                 tf.stop_gradient(R - self.model.v_out))
         v_loss = tf.reduce_mean(tf.square(R - self.model.v_out))
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
                                                tf.log(self.model.p_out),
-                                               axis=1,
-                                               keep_dims=True))
+                                               axis=1, keepdims=True))
         loss = p_loss - entropy * 0.01 + v_loss * 0.5
 
-        # define optimizer
-        optimizer = tf.train.RMSPropOptimizer(learning_rate=5e-3, decay=0.99,
-                                              epsilon=1e-5)
+        grads = tf.gradients(loss, self.weights)
 
-        weights_params = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
-                                           'model' + self.thread_id)
-        grads = tf.gradients(loss, weights_params)
+        apply_grads = self.global_server.optimizer.apply_gradients(
+            zip(grads, self.global_server.weights))
 
-        apply_grads = optimizer.apply_gradients(grads)
+        return A, R, apply_grads
 
     def train(self):
         global global_step
@@ -62,6 +63,8 @@ class Worker(object):
 
         # メインループ
         local_step = 0
+        total_reward = 0
+        episode_num = 0
         while global_step < self.tmax:
             self.model.update_param(self.sess, self.global_server.weights)
 
@@ -82,6 +85,7 @@ class Worker(object):
 
                 # perform action
                 obs, reward, done, _ = self.env.step(action)
+                total_reward += reward
 
                 # append observation, reward and action to batch
                 s_batch.append(prev_obs)
@@ -91,6 +95,8 @@ class Worker(object):
                 # advance step
                 global_step += 1
                 local_step += 1
+            a_batch = np.int32(np.array(a_batch))
+            s_batch = np.float32(np.array(s_batch))
 
             R = 0
             if done:
@@ -107,4 +113,19 @@ class Worker(object):
                 R = r_history[i] + self.discount_fact * R
                 r_batch[i] = R
 
-            print(self.thread_id, global_step, local_step, episode_len)
+            # update global shared parameter
+            self.sess.run(self.apply_grads,
+                          feed_dict={self.A: a_batch,
+                                     self.R: r_batch,
+                                     self.model.s: s_batch
+                                     }
+                          )
+            if done:
+                print('thread: {0}, '
+                      'global step: {1}, '
+                      'local step: {2}, '
+                      'total reward: {3}'
+                      .format(self.thread_id, global_step, local_step,
+                              total_reward))
+                total_reward = 0
+                episode_num += 1
