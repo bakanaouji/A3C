@@ -13,7 +13,7 @@ class A3CLSTM(object):
             tf.float32, [None, agent_history_length, frame_width, frame_height]
 
         )
-        with tf.name_scope('model' + thread_id):
+        with tf.name_scope('model' + str(thread_id)):
             inputs = Input(shape=(agent_history_length, frame_width,
                                   frame_height))
             # 共通の中間層
@@ -31,15 +31,16 @@ class A3CLSTM(object):
             shared = Flatten()(shared)
             shared = Dense(256, activation='relu')(shared)
 
-            # 政策
-            action_probs = Dense(num_actions, activation='softmax')(shared)
-            self.policy_network = Model(inputs=inputs, outputs=action_probs)
-
             # 価値関数
             state_value = Dense(1)(shared)
-            self.value_network = Model(inputs=inputs, outputs=state_value)
-        self.p_out = self.policy_network(self.s)
-        self.v_out = self.value_network(self.s)
+
+            # 政策
+            action_probs = Dense(num_actions, activation='softmax')(shared)
+
+            self.model = Model(inputs=inputs,
+                               outputs=[action_probs, state_value])
+        self.p_out = self.model(self.s)[0]
+        self.v_out = self.model(self.s)[1]
 
     def take_action(self, sess, observation):
         action_p = self.p_out.eval(session=sess,
