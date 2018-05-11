@@ -4,9 +4,9 @@ import tensorflow as tf
 import numpy as np
 import random
 
+from a3c.global_server import GlobalServer
 from a3c.worker import Worker
 from envs.env_wrappers import make_atari, wrap_deepmind
-from models.a3c_lstm import A3CLSTM
 
 
 class Trainer(object):
@@ -31,15 +31,16 @@ class Trainer(object):
         # initialize model
         env = make_atari(self.env_name)
         env = wrap_deepmind(env)
-        a3c_lstm = A3CLSTM('main', env.action_space.n, self.history_len,
-                           self.width, self.height)
+        action_n = env.action_space.n
         env.close()
+        global_server = GlobalServer(action_n, self.history_len,
+                                     self.width, self.height)
 
         # initialize session
         sess = tf.InteractiveSession()
 
         # ワーカーとスレッド初期化
-        workers = [Worker(sess, a3c_lstm, self.env_name, i, self.seed,
+        workers = [Worker(sess, global_server, self.env_name, i, self.seed,
                           self.tmax, self.batch_size, self.discount_fact,
                           self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]

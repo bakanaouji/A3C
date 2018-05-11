@@ -8,7 +8,7 @@ global_step = 0
 
 
 class Worker(object):
-    def __init__(self, sess, global_model, env_id, thread_id, seed, tmax,
+    def __init__(self, sess, global_server, env_id, thread_id, seed, tmax,
                  batch_size, discount_fact, history_len, width, height):
         self.thread_id = thread_id
         self.global_step = global_step
@@ -25,9 +25,9 @@ class Worker(object):
         self.sess = sess
 
         # initialize model
-        self.model = A3CLSTM('model' + str(thread_id), self.env.action_space.n,
+        self.model = A3CLSTM(self.env.action_space.n,
                              history_len, width, height)
-        self.global_model = global_model
+        self.global_server = global_server
 
     def build_training_op(self):
         A = tf.placeholder(tf.float32, [None])
@@ -63,7 +63,7 @@ class Worker(object):
         # メインループ
         local_step = 0
         while global_step < self.tmax:
-            self.model.update_param(self.global_model)
+            self.model.update_param(self.sess, self.global_server.weights)
 
             s_batch = []
             a_batch = []

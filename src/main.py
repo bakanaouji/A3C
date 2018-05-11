@@ -19,7 +19,7 @@ def main():
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Number of training cases over which each SGD update is computed.')
-    parser.add_argument('--worker_num', type=int, default=2,
+    parser.add_argument('--worker_num', type=int, default=1,
                         help='How many training processes to use')
     parser.add_argument('--history_len', type=int, default=4,
                         help='Number of most recent frames experienced '

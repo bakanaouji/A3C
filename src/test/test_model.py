@@ -1,4 +1,5 @@
 import unittest
+import tensorflow as tf
 
 from keras.utils.vis_utils import plot_model
 from models.a3c_lstm import A3CLSTM
@@ -10,8 +11,13 @@ class TestModel(unittest.TestCase):
         agent_history_length = 4
         frame_width = 84
         frame_height = 84
-        a3c_lstm = A3CLSTM(0, num_actions, agent_history_length, frame_width,
-                           frame_height)
+
+        a3c_lstm = A3CLSTM(num_actions, agent_history_length,
+                           frame_width, frame_height)
+
+        sess = tf.InteractiveSession()
+        sess.run(tf.global_variables_initializer())
+
         s_shape = a3c_lstm.s.get_shape().as_list()
         self.assertEqual(s_shape, [None, agent_history_length, frame_width,
                                    frame_height])
