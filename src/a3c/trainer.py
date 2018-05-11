@@ -38,16 +38,17 @@ class Trainer(object):
         # initialize session
         sess = tf.InteractiveSession()
 
-        # initialize variables
-        sess.run(tf.global_variables_initializer())
-
         # ワーカーとスレッド初期化
         workers = [Worker(a3c_lstm, sess, self.env_name, i, self.seed,
-                          self.tmax, self.batch_size, self.discount_fact)
+                          self.tmax, self.batch_size, self.discount_fact,
+                          self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]
         thread = [Thread(target=workers[i].train,
                          args=())
                   for i in range(len(workers))]
+
+        # initialize variables
+        sess.run(tf.global_variables_initializer())
 
         # 各スレッドで学習実行開始
         for thread in thread:

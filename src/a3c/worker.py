@@ -2,13 +2,14 @@ import numpy as np
 import tensorflow as tf
 
 from envs.env_wrappers import make_atari, wrap_deepmind
+from models.a3c_lstm import A3CLSTM
 
 global_step = 0
 
 
 class Worker(object):
-    def __init__(self, model, sess, env_id, thread_id, seed, tmax, batch_size,
-                 discount_fact):
+    def __init__(self, global_model, sess, env_id, thread_id, seed, tmax,
+                 batch_size, discount_fact, history_len, width, height):
         self.thread_id = thread_id
         self.global_step = global_step
         self.tmax = tmax
@@ -24,7 +25,9 @@ class Worker(object):
         self.sess = sess
 
         # initialize model
-        self.model = model
+        self.model = A3CLSTM(self.env.action_space.n, history_len, width,
+                             height)
+        self.global_model = global_model
 
     def build_training_op(self):
         A = tf.placeholder(tf.float32, [None])
