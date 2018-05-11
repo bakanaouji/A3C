@@ -39,7 +39,7 @@ class Trainer(object):
         sess = tf.InteractiveSession()
 
         # ワーカーとスレッド初期化
-        workers = [Worker(a3c_lstm, sess, self.env_name, i, self.seed,
+        workers = [Worker(sess, a3c_lstm, self.env_name, i, self.seed,
                           self.tmax, self.batch_size, self.discount_fact,
                           self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]

@@ -8,7 +8,7 @@ global_step = 0
 
 
 class Worker(object):
-    def __init__(self, global_model, sess, env_id, thread_id, seed, tmax,
+    def __init__(self, sess, global_model, env_id, thread_id, seed, tmax,
                  batch_size, discount_fact, history_len, width, height):
         self.thread_id = thread_id
         self.global_step = global_step
@@ -25,8 +25,8 @@ class Worker(object):
         self.sess = sess
 
         # initialize model
-        self.model = A3CLSTM(self.env.action_space.n, history_len, width,
-                             height)
+        self.model = A3CLSTM(thread_id, self.env.action_space.n, history_len,
+                             width, height)
         self.global_model = global_model
 
     def build_training_op(self):
@@ -44,7 +44,15 @@ class Worker(object):
                                                keep_dims=True))
         loss = p_loss - entropy * 0.01 + v_loss * 0.5
 
-        # optimizer = tf.train.RMSPropOptimizer(decay=0.99, epsilon=1e-5)
+        # define optimizer
+        optimizer = tf.train.RMSPropOptimizer(learning_rate=5e-3, decay=0.99,
+                                              epsilon=1e-5)
+
+        weights_params = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                           'model' + self.thread_id)
+        grads = tf.gradients(loss, weights_params)
+
+        apply_grads = optimizer.apply_gradients(grads)
 
     def train(self):
         global global_step
@@ -55,6 +63,9 @@ class Worker(object):
         # メインループ
         local_step = 0
         while global_step < self.tmax:
+            self.model.update_param(self.global_model.policy_network,
+                                    self.global_model.value_network)
+
             s_batch = []
             a_batch = []
             r_history = []
