@@ -56,7 +56,7 @@ class ParameterServer:
         out_actions = Dense(NUM_ACTIONS, activation='softmax')(l_dense)
         out_value = Dense(1, activation='linear')(l_dense)
         model = Model(inputs=[l_input], outputs=[out_actions, out_value])
-        plot_model(model, to_file='A3C.png', show_shapes=True)  # Qネットワークの可視化
+        # plot_model(model, to_file='A3C.png', show_shapes=True)  # Qネットワークの可視化
         return model
 
 
@@ -83,10 +83,10 @@ class LocalBrain:
     def _build_graph(self, name,
                      parameter_server):  # TensorFlowでネットワークの重みをどう学習させるのかを定義します
         self.s_t = tf.placeholder(tf.float32, shape=(
-        None, NUM_STATES))  # placeholderは変数が格納される予定地となります
+            None, NUM_STATES))  # placeholderは変数が格納される予定地となります
         self.a_t = tf.placeholder(tf.float32, shape=(None, NUM_ACTIONS))
         self.r_t = tf.placeholder(tf.float32, shape=(
-        None, 1))  # not immediate, but discounted n step reward
+            None, 1))  # not immediate, but discounted n step reward
 
         p, v = self.model(self.s_t)
 
@@ -212,8 +212,7 @@ class Agent:
         self.memory.append((s, a_cats, r, s_))
 
         # 前ステップの「時間割引Nステップ分の総報酬R」を使用して、現ステップのRを計算
-        self.R = (
-                         self.R + r * GAMMA_N) / GAMMA  # r0はあとで引き算している、この式はヤロミルさんのサイトを参照
+        self.R = (self.R + r * GAMMA_N) / GAMMA  # r0はあとで引き算している、この式はヤロミルさんのサイトを参照
 
         # advantageを考慮しながら、LocalBrainに経験を入力する
         if s_ is None:
@@ -313,11 +312,11 @@ class Worker_thread:
     def run(self):
         while True:
             if not (
-            isLearned) and self.thread_type is 'learning':  # learning threadが走る
+                    isLearned) and self.thread_type is 'learning':  # learning threadが走る
                 self.environment.run()
 
             if not (
-            isLearned) and self.thread_type is 'test':  # test threadを止めておく
+                    isLearned) and self.thread_type is 'test':  # test threadを止めておく
                 time.sleep(1.0)
 
             if isLearned and self.thread_type is 'learning':  # learning threadを止めておく

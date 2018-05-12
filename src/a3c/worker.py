@@ -77,20 +77,20 @@ class Worker(object):
 
             # run episode
             while not done and local_step - start_step < self.batch_size:
-                # 前の状態を保存
-                prev_obs = obs.copy()
 
                 # choose action
                 action = self.model.take_action(self.sess, [obs])
 
                 # perform action
-                obs, reward, done, _ = self.env.step(action)
+                next_obs, reward, done, _ = self.env.step(action)
                 total_reward += reward
 
                 # append observation, reward and action to batch
-                s_batch.append(prev_obs)
+                s_batch.append(obs)
                 a_batch.append(action)
                 r_history.append(reward)
+
+                obs = next_obs
 
                 # advance step
                 global_step += 1
@@ -100,7 +100,7 @@ class Worker(object):
 
             R = 0
             if done:
-                self.env.reset()
+                obs = self.env.reset()
             else:
                 # bootstrap from last state
                 R = self.model.estimate_value(self.sess, [obs])
