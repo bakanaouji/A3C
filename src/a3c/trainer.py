@@ -22,31 +22,30 @@ class Trainer(object):
         self.discount_fact = args.discount_fact
 
         # 乱数シードセット
-        tf.set_random_seed(args.seed)
-        np.random.seed(args.seed)
-        random.seed(args.seed)
+        # tf.set_random_seed(args.seed)
+        # np.random.seed(args.seed)
+        # random.seed(args.seed)
 
     def train(self):
-        # initialize model
-        global_server = GlobalServer(self.envs[0].action_space.n,
-                                     self.history_len, self.width, self.height)
-
         # initialize session
         sess = tf.InteractiveSession()
+
+        # initialize global shared parameter
+        global_server = GlobalServer(self.envs[0].action_space.n,
+                                     self.history_len, self.width, self.height)
 
         # ワーカーとスレッド初期化
         workers = [Worker(sess, global_server, self.envs[i], i, self.seed,
                           self.tmax, self.batch_size, self.discount_fact,
                           self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]
-        thread = [Thread(target=workers[i].train, args=())
-                  for i in range(len(workers))]
+        threads = [Thread(target=worker.train, args=()) for worker in workers]
 
         # initialize variables
         sess.run(tf.global_variables_initializer())
 
         # 各スレッドで学習実行開始
-        for thread in thread:
+        for thread in threads:
             thread.start()
 
         # while True:
