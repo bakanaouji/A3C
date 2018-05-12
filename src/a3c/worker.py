@@ -37,10 +37,10 @@ class Worker(object):
         A = tf.placeholder(tf.int32, [None])
         R = tf.placeholder(tf.float32, [None])
 
-        log_prob = -tf.log(tf.reduce_sum(self.model.p_out *
-                                         tf.one_hot(A, depth=self.action_n),
-                                         axis=1, keepdims=True))
-        p_loss = tf.reduce_mean(log_prob *
+        log_prob = tf.log(tf.reduce_sum(self.model.p_out *
+                                        tf.one_hot(A, depth=self.action_n),
+                                        axis=1, keepdims=True))
+        p_loss = tf.reduce_mean(-log_prob *
                                 tf.stop_gradient(R - self.model.v_out))
         v_loss = tf.reduce_mean(tf.square(R - self.model.v_out))
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *

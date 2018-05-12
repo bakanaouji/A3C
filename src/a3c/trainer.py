@@ -39,8 +39,7 @@ class Trainer(object):
                           self.tmax, self.batch_size, self.discount_fact,
                           self.history_len, self.width, self.height)
                    for i in range(self.worker_num)]
-        thread = [Thread(target=workers[i].train,
-                         args=())
+        thread = [Thread(target=workers[i].train, args=())
                   for i in range(len(workers))]
 
         # initialize variables

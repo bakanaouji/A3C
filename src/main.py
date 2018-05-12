@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
     parser.add_argument('--tmax', type=int, default=2000000,
                         help='Number of action selections to finish learning.')
-    parser.add_argument('--batch_size', type=int, default=32,
+    parser.add_argument('--batch_size', type=int, default=10,
                         help='Number of training cases over which each SGD update is computed.')
     parser.add_argument('--worker_num', type=int, default=8,
                         help='How many training processes to use')
