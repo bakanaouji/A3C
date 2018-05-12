@@ -77,7 +77,6 @@ class Worker(object):
 
             # run episode
             while not done and local_step - start_step < self.batch_size:
-
                 # choose action
                 action = self.model.take_action(self.sess, [obs])
 
