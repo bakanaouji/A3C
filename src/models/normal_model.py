@@ -23,6 +23,7 @@ class NormalModel(object):
         self.model = Model(inputs=inputs,
                            outputs=[action_probs, state_value])
         self.p_out, self.v_out = self.model(self.s)
+        self.operation = None
 
     def take_action(self, sess, observation):
         action_p = self.p_out.eval(session=sess,
@@ -35,7 +36,9 @@ class NormalModel(object):
                                feed_dict={self.s: observation})[0][0]
 
     def update_param(self, sess, src_weights):
-        weights = self.model.trainable_weights
-        operation = [src_weight.assign(weight) for weight, src_weight in
-                     zip(src_weights, weights)]
-        sess.run(operation)
+        if self.operation is None:
+            weights = self.model.trainable_weights
+            self.operation = [src_weight.assign(weight) for weight, src_weight
+                              in
+                              zip(src_weights, weights)]
+        sess.run(self.operation)
