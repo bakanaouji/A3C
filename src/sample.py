@@ -1,21 +1,7 @@
-# coding:utf-8
-# -----------------------------------
-# OpenGym CartPole-v0 with A3C on CPU
-# -----------------------------------
-#
-# A3C implementation with TensorFlow multi threads.
-#
-# Made as part of Qiita article, available at
-# https://??/
-#
-# author: Sugulu, 2017
-
 import tensorflow as tf
 import gym, time, random, threading
-from gym import wrappers  # gymの画像保存
 from keras.models import *
 from keras.layers import *
-from keras.utils import plot_model
 from keras import backend as K
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'    # TensorFlow高速化用のワーニングを表示させない
@@ -65,7 +51,6 @@ class ParameterServer:
         out_actions = Dense(NUM_ACTIONS, activation='softmax')(l_dense)
         out_value = Dense(1, activation='linear')(l_dense)
         model = Model(inputs=[l_input], outputs=[out_actions, out_value])
-        plot_model(model, to_file='A3C.png', show_shapes=True)  # Qネットワークの可視化
         return model
 
 
