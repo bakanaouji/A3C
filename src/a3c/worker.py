@@ -27,7 +27,8 @@ class Worker(object):
         # initialize model
         # self.model = AtariModel(self.env.action_space.n,
         #                         history_len, width, height)
-        self.model = NormalModel(self.env.action_space.n, 4)
+        self.model = NormalModel(self.env.action_space.n,
+                                 self.env.observation_space.shape[0])
         self.weights = self.model.model.trainable_weights
 
         # initialize update operation
@@ -65,6 +66,7 @@ class Worker(object):
         local_step = 0
         total_reward = 0
         episode_num = 0
+        episode_len = 0
         while global_step < self.tmax:
             self.model.update_param(self.sess, self.global_server.weights)
 
@@ -82,6 +84,12 @@ class Worker(object):
 
                 # perform action
                 next_obs, reward, done, _ = self.env.step(action)
+                reward = 0
+                if done:  # terminal state
+                    if local_step - start_step < 199:
+                        reward = -1
+                    else:
+                        reward = 1
                 total_reward += reward
 
                 # append observation, reward and action to batch
@@ -94,6 +102,7 @@ class Worker(object):
                 # advance step
                 global_step += 1
                 local_step += 1
+                episode_len += 1
             a_batch = np.int32(np.array(a_batch))
             s_batch = np.float32(np.array(s_batch))
 
@@ -104,11 +113,11 @@ class Worker(object):
                 # bootstrap from last state
                 R = self.model.estimate_value(self.sess, [obs])
 
-            episode_len = len(s_batch)
+            batch_size = len(s_batch)
 
             # make reward batch
-            r_batch = np.zeros(episode_len)
-            for i in reversed(range(episode_len)):
+            r_batch = np.zeros(batch_size)
+            for i in reversed(range(batch_size)):
                 R = r_history[i] + self.discount_fact * R
                 r_batch[i] = R
 
@@ -123,8 +132,10 @@ class Worker(object):
                 print('thread: {0}, '
                       'global step: {1}, '
                       'local step: {2}, '
-                      'total reward: {3}'
+                      'total reward: {3} '
+                      'episode len: {4}'
                       .format(self.thread_id, global_step, local_step,
-                              total_reward))
+                              total_reward, episode_len))
                 total_reward = 0
+                episode_len = 0
                 episode_num += 1

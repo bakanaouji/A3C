@@ -11,7 +11,7 @@ class NormalModel(object):
         self.s = tf.placeholder(
             tf.float32, [None, num_states]
         )
-        inputs = Input(shape=(4,))
+        inputs = Input(shape=(num_states,))
         shared = Dense(16, activation='relu')(inputs)
 
         # 政策
@@ -22,8 +22,7 @@ class NormalModel(object):
 
         self.model = Model(inputs=inputs,
                            outputs=[action_probs, state_value])
-        self.p_out = self.model(self.s)[0]
-        self.v_out = self.model(self.s)[1]
+        self.p_out, self.v_out = self.model(self.s)
 
     def take_action(self, sess, observation):
         action_p = self.p_out.eval(session=sess,
