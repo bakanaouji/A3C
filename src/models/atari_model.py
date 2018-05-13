@@ -15,11 +15,7 @@ class AtariModel(object):
         # 共通の中間層
         shared = Conv2D(
             16, (8, 8), strides=(4, 4), activation='relu',
-            input_shape=(
-                4,
-                frame_width,
-                frame_height
-            ),
+            input_shape=(4, frame_width, frame_height),
             data_format='channels_first'
         )(inputs)
         shared = Conv2D(32, (4, 4), strides=(2, 2), activation='relu',
