@@ -12,13 +12,10 @@ class Trainer(object):
     def __init__(self, args, envs, models):
         self.envs = envs
         self.models = models
-        self.width = args.width
-        self.height = args.height
 
         self.tmax = args.tmax
         self.batch_size = args.batch_size
         self.worker_num = args.worker_num
-        self.history_len = args.history_len
         self.discount_fact = args.discount_fact
 
         # 乱数シードセット

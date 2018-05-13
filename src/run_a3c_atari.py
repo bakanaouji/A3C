@@ -2,6 +2,7 @@ import argparse
 
 from a3c.trainer import Trainer
 from envs.env_wrappers import make_atari, wrap_deepmind
+from models.atari_model import AtariModel
 
 
 def main():
@@ -22,9 +23,6 @@ def main():
                         help='Number of training cases over which each SGD update is computed.')
     parser.add_argument('--worker_num', type=int, default=8,
                         help='How many training processes to use')
-    parser.add_argument('--history_len', type=int, default=4,
-                        help='Number of most recent frames experienced '
-                             'by the agent that are given as input to the Q-Network.')
     parser.add_argument('--discount_fact', type=float, default=0.99,
                         help='Discount factor gamma used in the A3C update.')
 
@@ -33,7 +31,10 @@ def main():
     envs = [wrap_deepmind(make_atari(args.env_name)) for _ in
             range(args.worker_num)]
 
-    trainer = Trainer(args, envs)
+    models = [AtariModel(envs[0].action_space.n, args.width, args.height)
+              for _ in range(args.worker_num + 1)]
+
+    trainer = Trainer(args, envs, models)
     trainer.train()
 
 

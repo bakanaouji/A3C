@@ -6,19 +6,17 @@ from keras.layers import Conv2D, Flatten, Dense, Input
 
 
 class AtariModel(object):
-    def __init__(self, num_actions, agent_history_length,
-                 frame_width, frame_height):
+    def __init__(self, num_actions, frame_width, frame_height):
         # 入力
         self.s = tf.placeholder(
-            tf.float32, [None, agent_history_length, frame_width, frame_height]
+            tf.float32, [None, 4, frame_width, frame_height]
         )
-        inputs = Input(shape=(agent_history_length, frame_width,
-                              frame_height))
+        inputs = Input(shape=(4, frame_width, frame_height))
         # 共通の中間層
         shared = Conv2D(
             16, (8, 8), strides=(4, 4), activation='relu',
             input_shape=(
-                agent_history_length,
+                4,
                 frame_width,
                 frame_height
             ),

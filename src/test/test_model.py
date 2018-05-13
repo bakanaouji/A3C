@@ -10,19 +10,16 @@ from models.normal_model import NormalModel
 class TestModel(unittest.TestCase):
     def test_atari_model(self):
         num_actions = 4
-        agent_history_length = 4
         frame_width = 84
         frame_height = 84
 
-        model = AtariModel(num_actions, agent_history_length,
-                           frame_width, frame_height)
+        model = AtariModel(num_actions, frame_width, frame_height)
 
         sess = tf.InteractiveSession()
         sess.run(tf.global_variables_initializer())
 
         s_shape = model.s.get_shape().as_list()
-        self.assertEqual(s_shape, [None, agent_history_length, frame_width,
-                                   frame_height])
+        self.assertEqual(s_shape, [None, 4, frame_width, frame_height])
         p_out_shape = model.p_out.get_shape().as_list()
         self.assertEqual(p_out_shape, [None, num_actions])
         v_out_shape = model.v_out.get_shape().as_list()
