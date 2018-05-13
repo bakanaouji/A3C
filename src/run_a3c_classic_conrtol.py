@@ -13,7 +13,7 @@ def main():
                         help='Environment name')
 
     # A3Cのアルゴリズムのパラメータ
-    parser.add_argument('--seed', help='RNG seed', type=int, default=0)
+    parser.add_argument('--seed', help='random seed', type=int, default=0)
     parser.add_argument('--tmax', type=int, default=2000000,
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=10,
@@ -22,6 +22,10 @@ def main():
                         help='How many training processes to use')
     parser.add_argument('--discount_fact', type=float, default=0.99,
                         help='Discount factor gamma used in the A3C update.')
+    parser.add_argument('--decay', type=float, default=0.99,
+                        help='RMSProp decay factor.')
+    parser.add_argument('--entropy_weight', type=float, default=0.01,
+                        help='Weight of entropy regularization.')
 
     args = parser.parse_args()
 

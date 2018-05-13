@@ -16,8 +16,8 @@ def main():
                         help='Height of resized frame')
 
     # A3Cのアルゴリズムのパラメータ
-    parser.add_argument('--seed', help='RNG seed', type=int, default=0)
-    parser.add_argument('--tmax', type=int, default=2000000,
+    parser.add_argument('--seed', help='random seed', type=int, default=0)
+    parser.add_argument('--tmax', type=int, default=50e6,
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Number of training cases over which each SGD update is computed.')

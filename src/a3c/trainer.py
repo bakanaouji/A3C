@@ -25,7 +25,8 @@ class Trainer(object):
         sess = tf.InteractiveSession()
 
         # initialize global shared parameter
-        global_server = GlobalServer(self.models[len(self.models) - 1])
+        global_server = GlobalServer(self.models[len(self.models) - 1],
+                                     self.args)
 
         # ワーカーとスレッド初期化
         workers = [Worker(sess, global_server, self.envs[i], self.models[i], i,

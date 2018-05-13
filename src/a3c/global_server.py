@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 class GlobalServer:
-    def __init__(self, model):
+    def __init__(self, model, args):
         # initialize model
         self.model = model
 
@@ -10,5 +10,5 @@ class GlobalServer:
 
         # define optimizer
         self.optimizer = tf.train.RMSPropOptimizer(learning_rate=5e-3,
-                                                   decay=0.99,
+                                                   decay=args.decay,
                                                    epsilon=1e-5)
