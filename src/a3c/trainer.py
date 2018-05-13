@@ -13,6 +13,7 @@ class Trainer(object):
         self.envs = envs
         self.models = models
 
+        self.args = args
         self.tmax = args.tmax
         self.batch_size = args.batch_size
         self.worker_num = args.worker_num
@@ -32,7 +33,7 @@ class Trainer(object):
 
         # ワーカーとスレッド初期化
         workers = [Worker(sess, global_server, self.envs[i], self.models[i], i,
-                          self.tmax, self.batch_size, self.discount_fact)
+                          self.args)
                    for i in range(self.worker_num)]
         threads = [Thread(target=worker.train, args=()) for worker in workers]
 

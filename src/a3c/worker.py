@@ -5,14 +5,13 @@ global_step = 0
 
 
 class Worker(object):
-    def __init__(self, sess, global_server, env, model, thread_id, tmax,
-                 batch_size, discount_fact):
+    def __init__(self, sess, global_server, env, model, thread_id, args):
+        self.global_server = global_server
         self.thread_id = thread_id
         self.global_step = global_step
-        self.tmax = tmax
-        self.batch_size = batch_size
-        self.discount_fact = discount_fact
-        self.global_server = global_server
+        self.tmax = args.tmax
+        self.batch_size = args.batch_size
+        self.discount_fact = args.discount_fact
 
         # initialize environment
         self.env = env
