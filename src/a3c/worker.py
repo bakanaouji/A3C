@@ -80,11 +80,13 @@ class Worker(object):
 
             start_step = local_step
             done = False
+            lr = None
 
             # run episode
             while not done and local_step - start_step < self.batch_size:
                 # choose action
                 action = self.model.take_action(self.sess, [obs])
+                lr = self.global_server.scheduler.value()
 
                 # perform action
                 next_obs, reward, done, _ = self.env.step(action)
@@ -123,7 +125,8 @@ class Worker(object):
             self.sess.run(self.apply_grads,
                           feed_dict={self.A: a_batch,
                                      self.R: r_batch,
-                                     self.model.s: s_batch
+                                     self.model.s: s_batch,
+                                     self.global_server.lr: lr
                                      }
                           )
             if done:
@@ -131,9 +134,10 @@ class Worker(object):
                       'global step: {1}, '
                       'local step: {2}, '
                       'total reward: {3} '
-                      'episode len: {4}'
+                      'episode len: {4} '
+                      'learning rate: {5}'
                       .format(self.thread_id, global_step, local_step,
-                              total_reward, episode_len))
+                              total_reward, episode_len, lr))
                 total_reward = 0
                 episode_len = 0
                 episode_num += 1

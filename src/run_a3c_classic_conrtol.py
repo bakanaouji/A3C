@@ -14,12 +14,14 @@ def main():
 
     # A3Cのアルゴリズムのパラメータ
     parser.add_argument('--seed', help='random seed', type=int, default=0)
-    parser.add_argument('--tmax', type=int, default=2000000,
+    parser.add_argument('--tmax', type=int, default=100000,
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=10,
                         help='Number of training cases over which each SGD update is computed.')
     parser.add_argument('--worker_num', type=int, default=8,
                         help='How many training processes to use')
+    parser.add_argument('--learn_rate', type=float, default=5e-3,
+                        help='Learning rate used by RMSProp.')
     parser.add_argument('--discount_fact', type=float, default=0.99,
                         help='Discount factor gamma used in the A3C update.')
     parser.add_argument('--decay', type=float, default=0.99,

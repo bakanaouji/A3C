@@ -1,4 +1,4 @@
-class LinearSchedule(object):
+class Scheduler(object):
     def __init__(self, v, n_values):
         self.n = 0.
         self.v = v

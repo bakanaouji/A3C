@@ -23,8 +23,14 @@ def main():
                         help='Number of training cases over which each SGD update is computed.')
     parser.add_argument('--worker_num', type=int, default=8,
                         help='How many training processes to use')
+    parser.add_argument('--learn_rate', type=float, default=7e-4,
+                        help='Learning rate used by RMSProp.')
     parser.add_argument('--discount_fact', type=float, default=0.99,
                         help='Discount factor gamma used in the A3C update.')
+    parser.add_argument('--decay', type=float, default=0.99,
+                        help='RMSProp decay factor.')
+    parser.add_argument('--entropy_weight', type=float, default=0.01,
+                        help='Weight of entropy regularization.')
 
     args = parser.parse_args()
 
