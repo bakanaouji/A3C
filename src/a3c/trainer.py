@@ -14,10 +14,6 @@ class Trainer(object):
         self.models = models
 
         self.args = args
-        self.tmax = args.tmax
-        self.batch_size = args.batch_size
-        self.worker_num = args.worker_num
-        self.discount_fact = args.discount_fact
 
         # 乱数シードセット
         tf.set_random_seed(args.seed)
@@ -34,7 +30,7 @@ class Trainer(object):
         # ワーカーとスレッド初期化
         workers = [Worker(sess, global_server, self.envs[i], self.models[i], i,
                           self.args)
-                   for i in range(self.worker_num)]
+                   for i in range(self.args.worker_num)]
         threads = [Thread(target=worker.train, args=()) for worker in workers]
 
         # initialize variables
