@@ -34,6 +34,9 @@ class Worker(object):
         # initialize update operation
         self.A, self.R, self.apply_grads = self.build_training_op()
 
+        # initialize synchronize operation
+        self.sync_parameter = self.build_sync_op()
+
     def build_training_op(self):
         A = tf.placeholder(tf.int32, [None])
         R = tf.placeholder(tf.float32, [None])
@@ -56,6 +59,13 @@ class Worker(object):
 
         return A, R, apply_grads
 
+    def build_sync_op(self):
+        weights = self.model.weights
+        src_weights = self.global_server.weights
+        sync_parameter = [weight.assign(src_weight) for weight, src_weight
+                          in zip(weights, src_weights)]
+        return sync_parameter
+
     def train(self):
         global global_step
 
@@ -68,7 +78,7 @@ class Worker(object):
         episode_num = 0
         episode_len = 0
         while global_step < self.tmax:
-            self.model.update_param(self.sess, self.global_server.weights)
+            self.sess.run(self.sync_parameter)
 
             s_batch = []
             a_batch = []

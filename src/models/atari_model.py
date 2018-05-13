@@ -37,8 +37,8 @@ class AtariModel(object):
 
         self.model = Model(inputs=inputs,
                            outputs=[action_probs, state_value])
-        self.p_out = self.model(self.s)[0]
-        self.v_out = self.model(self.s)[1]
+        self.p_out, self.v_out = self.model(self.s)
+        self.weights = self.model.trainable_weights
 
     def take_action(self, sess, observation):
         action_p = self.p_out.eval(session=sess,
@@ -49,9 +49,3 @@ class AtariModel(object):
     def estimate_value(self, sess, observation):
         return self.v_out.eval(session=sess,
                                feed_dict={self.s: observation})[0][0]
-
-    def update_param(self, sess, src_weights):
-        weights = self.model.trainable_weights
-        operation = [src_weight.assign(weight) for weight, src_weight in
-                     zip(src_weights, weights)]
-        sess.run(operation)
