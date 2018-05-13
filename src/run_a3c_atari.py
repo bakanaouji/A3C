@@ -21,7 +21,7 @@ def main():
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=5,
                         help='Number of training cases over which each SGD update is computed.')
-    parser.add_argument('--worker_num', type=int, default=8,
+    parser.add_argument('--worker_num', type=int, default=16,
                         help='How many training processes to use')
     parser.add_argument('--learn_rate', type=float, default=7e-4,
                         help='Learning rate used by RMSProp.')
