@@ -38,6 +38,6 @@ class NormalModel(object):
     def update_param(self, sess, src_weights):
         if self.operation is None:
             weights = self.model.trainable_weights
-            self.operation = [src_weight.assign(weight) for weight, src_weight
-                              in zip(src_weights, weights)]
+            self.operation = [weight.assign(src_weight) for weight, src_weight
+                              in zip(weights, src_weights)]
         sess.run(self.operation)
