@@ -9,14 +9,14 @@ from models.normal_model import NormalModel
 def main():
     parser = argparse.ArgumentParser(description="A3C")
     # 環境側のパラメータ
-    parser.add_argument('--env_name', default='CartPole-v0',
+    parser.add_argument('--env_name', default='CartPole-v1',
                         help='Environment name')
 
     # A3Cのアルゴリズムのパラメータ
     parser.add_argument('--seed', help='random seed', type=int, default=0)
     parser.add_argument('--tmax', type=int, default=1000000,
                         help='Number of action selections to finish learning.')
-    parser.add_argument('--batch_size', type=int, default=10,
+    parser.add_argument('--batch_size', type=int, default=5,
                         help='Number of training cases over which each SGD update is computed.')
     parser.add_argument('--worker_num', type=int, default=8,
                         help='How many training processes to use')
