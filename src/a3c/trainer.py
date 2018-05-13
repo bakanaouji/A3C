@@ -22,9 +22,9 @@ class Trainer(object):
         self.discount_fact = args.discount_fact
 
         # 乱数シードセット
-        # tf.set_random_seed(args.seed)
-        # np.random.seed(args.seed)
-        # random.seed(args.seed)
+        tf.set_random_seed(args.seed)
+        np.random.seed(args.seed)
+        random.seed(args.seed)
 
     def train(self):
         # initialize session
@@ -32,6 +32,7 @@ class Trainer(object):
 
         # initialize global shared parameter
         global_server = GlobalServer(self.envs[0].action_space.n,
+                                     self.envs[0].observation_space.shape[0],
                                      self.history_len, self.width, self.height)
 
         # ワーカーとスレッド初期化
