@@ -19,7 +19,7 @@ class Worker(object):
 
         # initialize environment
         self.env = env
-        self.action_n = self.env.action_space.n
+        self.num_actions = self.env.action_space.n
 
         # initialize session
         self.sess = sess
@@ -42,7 +42,7 @@ class Worker(object):
         R = tf.placeholder(tf.float32, [None])
 
         log_prob = tf.log(tf.reduce_sum(self.model.p_out *
-                                        tf.one_hot(A, depth=self.action_n),
+                                        tf.one_hot(A, depth=self.num_actions),
                                         axis=1, keepdims=True))
         p_loss = tf.reduce_mean(-log_prob *
                                 tf.stop_gradient(R - self.model.v_out))

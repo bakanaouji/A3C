@@ -5,10 +5,10 @@ from models.normal_model import NormalModel
 
 
 class GlobalServer:
-    def __init__(self, action_n, history_len, width, height):
+    def __init__(self, num_actions, history_len, width, height):
         # initialize model
-        # self.model = AtariModel(action_n, history_len, width, height)
-        self.model = NormalModel(action_n, 4)
+        # self.model = AtariModel(num_actions, history_len, width, height)
+        self.model = NormalModel(num_actions, 4)
 
         self.weights = self.model.model.trainable_weights
 
