@@ -9,16 +9,20 @@ class AtariModel(object):
     def __init__(self, num_actions, frame_width, frame_height):
         # 入力
         self.s = tf.placeholder(
-            tf.float32, [None, 4, frame_width, frame_height]
+            tf.float32, [None, 1, frame_width, frame_height]
         )
-        inputs = Input(shape=(4, frame_width, frame_height))
+        s = tf.cast(self.s, tf.float32) / 255.
+
         # 共通の中間層
+        inputs = Input(shape=(1, frame_width, frame_height))
         shared = Conv2D(
-            16, (8, 8), strides=(4, 4), activation='relu',
-            input_shape=(4, frame_width, frame_height),
+            32, (8, 8), strides=(4, 4), activation='relu',
+            input_shape=(1, frame_width, frame_height),
             data_format='channels_first'
         )(inputs)
-        shared = Conv2D(32, (4, 4), strides=(2, 2), activation='relu',
+        shared = Conv2D(64, (4, 4), strides=(2, 2), activation='relu',
+                        data_format='channels_first')(shared)
+        shared = Conv2D(64, (3, 3), strides=(1, 1), activation='relu',
                         data_format='channels_first')(shared)
         shared = Flatten()(shared)
         shared = Dense(256, activation='relu')(shared)
@@ -31,7 +35,7 @@ class AtariModel(object):
 
         self.model = Model(inputs=inputs,
                            outputs=[action_probs, state_value])
-        self.p_out, self.v_out = self.model(self.s)
+        self.p_out, self.v_out = self.model(s)
         self.weights = self.model.trainable_weights
 
     def take_action(self, sess, observation):

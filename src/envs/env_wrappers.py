@@ -222,7 +222,7 @@ def wrap_deepmind(env):
     if 'FIRE' in env.unwrapped.get_action_meanings():
         env = FireResetEnv(env)
     env = WarpFrame(env)
-    env = FrameStack(env, 4)
+    env = FrameStack(env, 1)
     env = ClipRewardEnv(env)
-    env = ScaledFloatFrame(env)
+    # env = ScaledFloatFrame(env)
     return env
