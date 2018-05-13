@@ -9,21 +9,21 @@ class AtariModel(object):
     def __init__(self, num_actions, frame_width, frame_height):
         # 入力
         self.s = tf.placeholder(
-            tf.float32, [None, 1, frame_width, frame_height]
+            tf.float32, [None, frame_width, frame_height, 1]
         )
         s = tf.cast(self.s, tf.float32) / 255.
 
         # 共通の中間層
-        inputs = Input(shape=(1, frame_width, frame_height))
+        inputs = Input(shape=(frame_width, frame_height, 1))
         shared = Conv2D(
             32, (8, 8), strides=(4, 4), activation='relu',
-            input_shape=(1, frame_width, frame_height),
-            data_format='channels_first'
+            input_shape=(frame_width, frame_height, 1),
+            data_format='channels_last'
         )(inputs)
         shared = Conv2D(64, (4, 4), strides=(2, 2), activation='relu',
-                        data_format='channels_first')(shared)
+                        data_format='channels_last')(shared)
         shared = Conv2D(64, (3, 3), strides=(1, 1), activation='relu',
-                        data_format='channels_first')(shared)
+                        data_format='channels_last')(shared)
         shared = Flatten()(shared)
         shared = Dense(256, activation='relu')(shared)
 

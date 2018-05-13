@@ -140,7 +140,7 @@ class FrameStack(gym.Wrapper):
         self.frames = deque([], maxlen=k)
         shp = env.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(k * shp[2], shp[1], shp[0]))
+                                            shape=(shp[0], shp[1], shp[2] * k))
 
     def _reset(self):
         ob = self.env.reset()
@@ -166,7 +166,6 @@ class LazyFrames(object):
     def _force(self):
         if self._out is None:
             self._out = np.concatenate(self._frames, axis=2)
-            self._out = self._out.transpose(2, 0, 1)
             self._frames = None
         return self._out
 
@@ -222,7 +221,7 @@ def wrap_deepmind(env):
     if 'FIRE' in env.unwrapped.get_action_meanings():
         env = FireResetEnv(env)
     env = WarpFrame(env)
-    env = FrameStack(env, 1)
+    # env = FrameStack(env, 4)
     env = ClipRewardEnv(env)
     # env = ScaledFloatFrame(env)
     return env

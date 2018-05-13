@@ -19,7 +19,7 @@ class TestModel(unittest.TestCase):
         sess.run(tf.global_variables_initializer())
 
         s_shape = model.s.get_shape().as_list()
-        self.assertEqual(s_shape, [None, 4, frame_width, frame_height])
+        self.assertEqual(s_shape, [None, frame_width, frame_height, 4])
         p_out_shape = model.p_out.get_shape().as_list()
         self.assertEqual(p_out_shape, [None, num_actions])
         v_out_shape = model.v_out.get_shape().as_list()
