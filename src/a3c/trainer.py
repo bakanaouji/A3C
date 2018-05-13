@@ -9,9 +9,9 @@ from a3c.worker import Worker
 
 
 class Trainer(object):
-    def __init__(self, args, envs):
+    def __init__(self, args, envs, models):
         self.envs = envs
-        self.seed = args.seed
+        self.models = models
         self.width = args.width
         self.height = args.height
 
@@ -31,14 +31,11 @@ class Trainer(object):
         sess = tf.InteractiveSession()
 
         # initialize global shared parameter
-        global_server = GlobalServer(self.envs[0].action_space.n,
-                                     self.envs[0].observation_space.shape[0],
-                                     self.history_len, self.width, self.height)
+        global_server = GlobalServer(self.models[len(self.models) - 1])
 
         # ワーカーとスレッド初期化
-        workers = [Worker(sess, global_server, self.envs[i], i, self.seed,
-                          self.tmax, self.batch_size, self.discount_fact,
-                          self.history_len, self.width, self.height)
+        workers = [Worker(sess, global_server, self.envs[i], self.models[i], i,
+                          self.tmax, self.batch_size, self.discount_fact)
                    for i in range(self.worker_num)]
         threads = [Thread(target=worker.train, args=()) for worker in workers]
 

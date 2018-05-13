@@ -1,7 +1,5 @@
 import argparse
 
-import gym
-
 from a3c.trainer import Trainer
 from envs.env_wrappers import make_atari, wrap_deepmind
 
@@ -34,7 +32,7 @@ def main():
 
     envs = [wrap_deepmind(make_atari(args.env_name)) for _ in
             range(args.worker_num)]
-    # envs = [gym.make('CartPole-v0') for _ in range(args.worker_num)]
+
     trainer = Trainer(args, envs)
     trainer.train()
 

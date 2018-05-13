@@ -1,15 +1,12 @@
 import numpy as np
 import tensorflow as tf
 
-from models.atari_model import AtariModel
-from models.normal_model import NormalModel
-
 global_step = 0
 
 
 class Worker(object):
-    def __init__(self, sess, global_server, env, thread_id, seed, tmax,
-                 batch_size, discount_fact, history_len, width, height):
+    def __init__(self, sess, global_server, env, model, thread_id, tmax,
+                 batch_size, discount_fact):
         self.thread_id = thread_id
         self.global_step = global_step
         self.tmax = tmax
@@ -25,10 +22,7 @@ class Worker(object):
         self.sess = sess
 
         # initialize model
-        # self.model = AtariModel(self.env.action_space.n,
-        #                         history_len, width, height)
-        self.model = NormalModel(self.env.action_space.n,
-                                 self.env.observation_space.shape[0])
+        self.model = model
         self.weights = self.model.model.trainable_weights
 
         # initialize update operation

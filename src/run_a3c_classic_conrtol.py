@@ -3,6 +3,7 @@ import argparse
 import gym
 
 from a3c.trainer import Trainer
+from models.normal_model import NormalModel
 
 
 def main():
@@ -32,7 +33,12 @@ def main():
     args = parser.parse_args()
 
     envs = [gym.make('CartPole-v0') for _ in range(args.worker_num)]
-    trainer = Trainer(args, envs)
+
+    models = [NormalModel(envs[0].action_space.n,
+                          envs[0].observation_space.shape[0])
+              for _ in range(args.worker_num + 1)]
+
+    trainer = Trainer(args, envs, models)
     trainer.train()
 
 
