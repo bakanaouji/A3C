@@ -14,7 +14,7 @@ def main():
 
     # A3Cのアルゴリズムのパラメータ
     parser.add_argument('--seed', help='random seed', type=int, default=0)
-    parser.add_argument('--tmax', type=int, default=100000,
+    parser.add_argument('--tmax', type=int, default=1000000,
                         help='Number of action selections to finish learning.')
     parser.add_argument('--batch_size', type=int, default=10,
                         help='Number of training cases over which each SGD update is computed.')
@@ -31,7 +31,7 @@ def main():
 
     args = parser.parse_args()
 
-    envs = [gym.make('CartPole-v0') for _ in range(args.worker_num)]
+    envs = [gym.make(args.env_name) for _ in range(args.worker_num)]
 
     models = [NormalModel(envs[0].action_space.n,
                           envs[0].observation_space.shape[0])
