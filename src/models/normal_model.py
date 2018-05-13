@@ -39,6 +39,5 @@ class NormalModel(object):
         if self.operation is None:
             weights = self.model.trainable_weights
             self.operation = [src_weight.assign(weight) for weight, src_weight
-                              in
-                              zip(src_weights, weights)]
+                              in zip(src_weights, weights)]
         sess.run(self.operation)

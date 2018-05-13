@@ -84,12 +84,6 @@ class Worker(object):
 
                 # perform action
                 next_obs, reward, done, _ = self.env.step(action)
-                reward = 0
-                if done:  # terminal state
-                    if local_step - start_step < 199:
-                        reward = -1
-                    else:
-                        reward = 1
                 total_reward += reward
 
                 # append observation, reward and action to batch
