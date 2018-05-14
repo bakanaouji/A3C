@@ -44,7 +44,7 @@ class Worker(object):
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
                                                tf.log(self.model.p_out),
                                                axis=1, keepdims=True))
-        loss = p_loss - entropy * self.entropy_weight + v_loss * 0.5
+        loss = p_loss + entropy * self.entropy_weight + v_loss * 0.5
 
         grads = tf.gradients(loss, self.weights)
 
