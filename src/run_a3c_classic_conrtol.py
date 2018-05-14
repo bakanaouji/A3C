@@ -31,12 +31,15 @@ def main():
 
     args = parser.parse_args()
 
+    # 環境初期化
     envs = [gym.make(args.env_name) for _ in range(args.worker_num)]
 
+    # モデル初期化
     models = [NormalModel(envs[0].action_space.n,
                           envs[0].observation_space.shape[0])
               for _ in range(args.worker_num + 1)]
 
+    # 学習実行
     trainer = Trainer(args, envs, models)
     trainer.train()
 

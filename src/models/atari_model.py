@@ -7,6 +7,12 @@ from keras.layers import Conv2D, Flatten, Dense, Input
 
 class AtariModel(object):
     def __init__(self, num_actions, frame_width, frame_height):
+        """
+        Atari用のモデル．
+        :param num_actions:     行動数
+        :param frame_width:     画面の幅
+        :param frame_height:    画面の高さ
+        """
         # 入力
         self.s = tf.placeholder(
             tf.float32, [None, frame_width, frame_height, 1]
@@ -33,17 +39,30 @@ class AtariModel(object):
         # 価値関数
         state_value = Dense(1)(shared)
 
+        # 政策と価値関数の出力
         self.model = Model(inputs=inputs,
                            outputs=[action_probs, state_value])
         self.p_out, self.v_out = self.model(s)
+
+        # 重み
         self.weights = self.model.trainable_weights
 
     def take_action(self, sess, observation):
+        """
+        政策に基いて行動を選択
+        :param sess:        tensorflowのセッション
+        :param observation: 観測
+        """
         action_p = self.p_out.eval(session=sess,
                                    feed_dict={self.s: observation})
         return np.random.choice(action_p[0].size, 1,
                                 p=action_p[0])[0]
 
     def estimate_value(self, sess, observation):
+        """
+        価値関数に基いて価値を推定
+        :param sess:        tensorflowのセッション
+        :param observation: 観測
+        """
         return self.v_out.eval(session=sess,
                                feed_dict={self.s: observation})[0][0]

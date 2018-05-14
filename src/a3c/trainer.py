@@ -10,10 +10,15 @@ from a3c.worker import Worker
 
 class Trainer(object):
     def __init__(self, args, envs, models):
+        """
+        学習を行うTrainerクラス．
+        :param args:    パラメータ群
+        :param envs:    環境
+        :param models:  モデル
+        """
+        self.args = args
         self.envs = envs
         self.models = models
-
-        self.args = args
 
         # 乱数シードセット
         tf.set_random_seed(args.seed)
@@ -21,10 +26,13 @@ class Trainer(object):
         random.seed(args.seed)
 
     def train(self):
-        # initialize session
+        """
+        学習を実行
+        """
+        # Sessionの構築
         sess = tf.InteractiveSession()
 
-        # initialize global shared parameter
+        # global shared parameterを初期化
         global_server = GlobalServer(self.models[len(self.models) - 1],
                                      self.args)
 
@@ -34,7 +42,7 @@ class Trainer(object):
                    for i in range(self.args.worker_num)]
         threads = [Thread(target=worker.train, args=()) for worker in workers]
 
-        # initialize variables
+        # 変数の初期化
         sess.run(tf.global_variables_initializer())
 
         # 各スレッドで学習実行開始

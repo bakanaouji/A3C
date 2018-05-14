@@ -34,12 +34,15 @@ def main():
 
     args = parser.parse_args()
 
+    # 環境初期化
     envs = [wrap_deepmind(make_atari(args.env_name)) for _ in
             range(args.worker_num)]
 
+    # モデル初期化
     models = [AtariModel(envs[0].action_space.n, args.width, args.height)
               for _ in range(args.worker_num + 1)]
 
+    # 学習実行
     trainer = Trainer(args, envs, models)
     trainer.train()
 

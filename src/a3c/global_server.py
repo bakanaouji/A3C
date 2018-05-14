@@ -5,15 +5,19 @@ from utils.scheduler import Scheduler
 
 class GlobalServer:
     def __init__(self, model, args):
-        # initialize model
-        self.model = model
+        """
+        全てのスレッドで共有するパラメータを管理するサーバー．
+        :param model:   モデル
+        :param args:    パラメータ群
+        """
+        # global shared parameter vectors
+        self.weights = model.model.trainable_weights
 
-        self.weights = self.model.model.trainable_weights
-
-        self.lr = tf.placeholder(tf.float32, [])
+        # RMSPropの学習率
         self.scheduler = Scheduler(args.learn_rate, args.tmax)
+        self.lr = tf.placeholder(tf.float32, [])
 
-        # define optimizer
+        # optimizer
         self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.lr,
                                                    decay=args.decay,
                                                    epsilon=1e-5)
