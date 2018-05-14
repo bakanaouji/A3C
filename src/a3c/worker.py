@@ -55,7 +55,7 @@ class Worker(object):
                                 tf.stop_gradient(R - self.model.v_out))
         # 政策のentropy
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
-                                               tf.log(self.model.p_out),
+                                               tf.log(self.model.p_out + 1e-10),
                                                axis=1, keepdims=True))
         # 価値関数のloss
         v_loss = tf.reduce_mean(tf.square(R - self.model.v_out))
