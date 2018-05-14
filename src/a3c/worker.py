@@ -63,7 +63,7 @@ class Worker(object):
         # total loss
         loss = p_loss + entropy * self.entropy_weight + v_loss * 0.5
 
-        # global shared paremeterにgradientを反映する処理
+        # global shared parameterにgradientを反映する処理
         grads = tf.gradients(loss, self.weights)
         apply_grads = self.global_server.optimizer.apply_gradients(
             zip(grads, self.global_server.weights))
