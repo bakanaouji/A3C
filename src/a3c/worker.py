@@ -34,7 +34,7 @@ class Worker(object):
         self.weights = self.model.model.trainable_weights
 
         # global shared parameterを更新する処理を構築
-        self.A, self.R, self.apply_grads = self.build_training_op()
+        self.A, self.R, self.ADV, self.apply_grads = self.build_training_op()
 
         # global shared parameterと重みを同期する処理を構築
         self.sync_parameter = self.build_sync_op()
@@ -46,13 +46,13 @@ class Worker(object):
         # 行動と報酬のバッチ
         A = tf.placeholder(tf.int32, [None])
         R = tf.placeholder(tf.float32, [None])
+        ADV = tf.placeholder(tf.float32, [None])
 
         # 政策のloss
         log_prob = tf.log(tf.reduce_sum(self.model.p_out *
                                         tf.one_hot(A, depth=self.num_actions),
                                         axis=1, keepdims=True))
-        p_loss = tf.reduce_mean(-log_prob *
-                                tf.stop_gradient(R - self.model.v_out))
+        p_loss = tf.reduce_mean(-log_prob * ADV)
         # 政策のentropy
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
                                                tf.log(self.model.p_out + 1e-10),
@@ -68,7 +68,7 @@ class Worker(object):
         apply_grads = self.global_server.optimizer.apply_gradients(
             zip(grads, self.global_server.weights))
 
-        return A, R, apply_grads
+        return A, R, ADV, apply_grads
 
     def build_sync_op(self):
         """
@@ -101,6 +101,7 @@ class Worker(object):
 
             s_batch = []
             a_batch = []
+            v_batch = []
             r_history = []
 
             start_step = local_step
@@ -111,6 +112,7 @@ class Worker(object):
             while not done and local_step - start_step < self.batch_size:
                 # 行動を選択
                 action = self.model.take_action(self.sess, [obs])
+                value = self.model.estimate_value(self.sess, [obs])
 
                 # RMSPropの学習率更新
                 lr = self.global_server.scheduler.value()
@@ -122,6 +124,7 @@ class Worker(object):
                 # 観測，報酬，行動をバッチへと追加
                 s_batch.append(obs)
                 a_batch.append(action)
+                v_batch.append(value)
                 r_history.append(reward)
 
                 obs = next_obs
@@ -141,17 +144,20 @@ class Worker(object):
                 # bootstrap from last state
                 R = self.model.estimate_value(self.sess, [obs])
 
-            # 報酬のバッチを構築
+            # 報酬とadvantageのバッチを構築
             batch_size = len(s_batch)
             r_batch = np.zeros(batch_size)
+            adv_batch = np.zeros(batch_size)
             for i in reversed(range(batch_size)):
                 R = r_history[i] + self.discount_fact * R
                 r_batch[i] = R
+                adv_batch[i] = R - v_batch[i]
 
             # global shared parameterを更新
             self.sess.run(self.apply_grads,
                           feed_dict={self.A: a_batch,
                                      self.R: r_batch,
+                                     self.ADV: adv_batch,
                                      self.model.s: s_batch,
                                      self.global_server.lr: lr
                                      }
