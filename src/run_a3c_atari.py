@@ -35,7 +35,7 @@ def main():
     args = parser.parse_args()
 
     # 環境初期化
-    envs = [wrap_deepmind(make_atari(args.env_name)) for _ in
+    envs = [wrap_deepmind(make_atari(args.env_name), frame_stack=True) for _ in
             range(args.worker_num)]
 
     # モデル初期化

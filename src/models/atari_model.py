@@ -15,12 +15,12 @@ class AtariModel(object):
         """
         # 入力
         self.s = tf.placeholder(
-            tf.float32, [None, frame_width, frame_height, 1]
+            tf.float32, [None, frame_width, frame_height, 4]
         )
         s = tf.cast(self.s, tf.float32) / 255.
 
         # 共通の中間層
-        inputs = Input(shape=(frame_width, frame_height, 1))
+        inputs = Input(shape=(frame_width, frame_height, 4))
         shared = Conv2D(
             32, (8, 8), strides=(4, 4), activation='relu',
             input_shape=(frame_width, frame_height, 1),
@@ -40,8 +40,7 @@ class AtariModel(object):
         state_value = Dense(1)(shared)
 
         # 政策と価値関数の出力
-        self.model = Model(inputs=inputs,
-                           outputs=[action_probs, state_value])
+        self.model = Model(inputs=inputs, outputs=[action_probs, state_value])
         self.p_out, self.v_out = self.model(s)
 
         # 重み
@@ -55,8 +54,7 @@ class AtariModel(object):
         """
         action_p = self.p_out.eval(session=sess,
                                    feed_dict={self.s: observation})
-        return np.random.choice(action_p[0].size, 1,
-                                p=action_p[0])[0]
+        return np.random.choice(action_p[0].size, 1, p=action_p[0])[0]
 
     def estimate_value(self, sess, observation):
         """
