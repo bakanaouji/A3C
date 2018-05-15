@@ -49,9 +49,10 @@ class Worker(object):
         ADV = tf.placeholder(tf.float32, [None])
 
         # 政策のloss
-        neg_log_prob = tf.nn.sparse_softmax_cross_entropy_with_logits(
-            logits=self.model.p_out, labels=A)
-        p_loss = tf.reduce_mean(ADV * neg_log_prob)
+        log_prob = tf.log(tf.reduce_sum(self.model.p_out *
+                                        tf.one_hot(A, depth=self.num_actions),
+                                        axis=1, keepdims=True))
+        p_loss = tf.reduce_mean(-tf.squeeze(log_prob) * ADV)
         # 政策のentropy
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
                                                tf.log(self.model.p_out + 1e-10),
