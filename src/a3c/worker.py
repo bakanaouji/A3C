@@ -52,13 +52,13 @@ class Worker(object):
         log_prob = tf.log(tf.reduce_sum(self.model.p_out *
                                         tf.one_hot(A, depth=self.num_actions),
                                         axis=1, keepdims=True))
-        p_loss = tf.reduce_mean(-log_prob * ADV)
+        p_loss = tf.reduce_mean(-tf.squeeze(log_prob) * ADV)
         # 政策のentropy
         entropy = tf.reduce_mean(tf.reduce_sum(self.model.p_out *
                                                tf.log(self.model.p_out + 1e-10),
                                                axis=1, keepdims=True))
         # 価値関数のloss
-        v_loss = tf.reduce_mean(tf.square(R - self.model.v_out))
+        v_loss = tf.reduce_mean(tf.square(R - tf.squeeze(self.model.v_out)) / 2.0)
 
         # total loss
         loss = p_loss + entropy * self.entropy_weight + v_loss * 0.5
