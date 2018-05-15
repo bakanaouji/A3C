@@ -20,4 +20,4 @@ class GlobalServer:
         # optimizer
         self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.lr,
                                                    decay=args.decay,
-                                                   epsilon=1e-5)
+                                                   epsilon=0.1)
