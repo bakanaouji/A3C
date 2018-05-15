@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from copy import deepcopy
 
 global_step = 0  # globalなstep数
 
@@ -123,12 +122,12 @@ class Worker(object):
                 total_reward += reward
 
                 # 観測，報酬，行動をバッチへと追加
-                s_batch.append(obs)
+                s_batch.append(np.copy(obs))
                 a_batch.append(action)
                 v_batch.append(value)
                 r_history.append(reward)
 
-                obs = deepcopy(next_obs)
+                obs = next_obs
 
                 # step数を進める
                 global_step += 1
