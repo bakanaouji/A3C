@@ -127,7 +127,7 @@ class Worker(object):
                 v_batch.append(value)
                 r_history.append(reward)
 
-                obs = next_obs
+                obs = next_obs.copy()
 
                 # step数を進める
                 global_step += 1
