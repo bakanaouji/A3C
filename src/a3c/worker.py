@@ -66,7 +66,8 @@ class Worker(object):
         # global shared parameterにgradientを反映する処理
         grads = tf.gradients(loss, self.weights)
         apply_grads = self.global_server.optimizer.apply_gradients(
-            zip(grads, self.global_server.weights))
+            list(zip(grads, self.global_server.weights))
+        )
 
         return A, R, ADV, apply_grads
 
