@@ -35,7 +35,7 @@ class Worker(object):
 
         # global shared parameterを更新する処理を構築
         self.A, self.R, self.ADV, self.apply_grads, \
-        self.p_loss, self.entropy, self.v_loss = self.build_training_op()
+            self.p_loss, self.entropy, self.v_loss = self.build_training_op()
 
         # global shared parameterと重みを同期する処理を構築
         self.sync_parameter = self.build_sync_op()
