@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from utils.scheduler import Scheduler
+from utils.summarizer import Summarizer
 
 
 class GlobalServer:
@@ -21,3 +22,6 @@ class GlobalServer:
         self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.lr,
                                                    decay=args.decay,
                                                    epsilon=0.1)
+
+        # summarizer
+        self.summarizer = Summarizer('../data/summaries')

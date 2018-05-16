@@ -50,3 +50,5 @@ bin
 # python
 __pycache__
 *.pyc
+
+summaries

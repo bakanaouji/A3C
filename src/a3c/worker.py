@@ -34,7 +34,8 @@ class Worker(object):
         self.weights = self.model.model.trainable_weights
 
         # global shared parameterを更新する処理を構築
-        self.A, self.R, self.ADV, self.apply_grads = self.build_training_op()
+        self.A, self.R, self.ADV, self.apply_grads, \
+        self.p_loss, self.entropy, self.v_loss = self.build_training_op()
 
         # global shared parameterと重みを同期する処理を構築
         self.sync_parameter = self.build_sync_op()
@@ -70,7 +71,7 @@ class Worker(object):
             list(zip(grads, self.global_server.weights))
         )
 
-        return A, R, ADV, apply_grads
+        return A, R, ADV, apply_grads, p_loss, entropy, v_loss
 
     def build_sync_op(self):
         """
@@ -156,15 +157,30 @@ class Worker(object):
                 adv_batch[i] = R - v_batch[i]
 
             # global shared parameterを更新
-            self.sess.run(self.apply_grads,
-                          feed_dict={self.A: a_batch,
-                                     self.R: r_batch,
-                                     self.ADV: adv_batch,
-                                     self.model.s: s_batch,
-                                     self.global_server.lr: lr
-                                     }
-                          )
+            result = self.sess.run([self.apply_grads,
+                                    self.p_loss,
+                                    self.entropy,
+                                    self.v_loss
+                                    ],
+                                   feed_dict={self.A: a_batch,
+                                              self.R: r_batch,
+                                              self.ADV: adv_batch,
+                                              self.model.s: s_batch,
+                                              self.global_server.lr: lr
+                                              }
+                                   )
             if done:
+                # summarize
+                self.global_server.summarizer.write(
+                    {'total reward': total_reward,
+                     'episode length': episode_len,
+                     'policy loss': result[1],
+                     'policy entropy': -result[2],
+                     'value loss': result[3],
+                     'learning rate': lr
+                     },
+                    global_step
+                )
                 print('thread: {0}, '
                       'global step: {1}, '
                       'local step: {2}, '
