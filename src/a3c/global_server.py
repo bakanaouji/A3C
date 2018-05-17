@@ -24,4 +24,4 @@ class GlobalServer:
                                                    epsilon=0.1)
 
         # summarizer
-        self.summarizer = Summarizer('../data/summaries')
+        self.summarizer = Summarizer('../data/summaries/' + args.run_id)

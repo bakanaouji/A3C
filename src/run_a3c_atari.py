@@ -32,6 +32,11 @@ def main():
     parser.add_argument('--entropy_weight', type=float, default=0.01,
                         help='Weight of entropy regularization.')
 
+    # 学習のパラメータ
+    parser.add_argument('--run_id', default='BreakoutNoFrameskip-v4', type=str,
+                        help='The sub-directory name for'
+                             'model and summary statistics.')
+
     args = parser.parse_args()
 
     # 環境初期化
